@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "package": "com.zhiliaoapp.musically",
+  "appName": "TikTok",
+  "publisher": "ByteDance",
+  "lastUpdated": "2026-08-11",
+  "suggestions": [
+    {
+      "uuid": "3ad9c295-190a-4e43-b75c-fdbca9c43fb8",
+      "id": "tiktok-off-app-activity-ads",
+      "impact": "high",
+      "category": "advertising",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Stop TikTok using what you do elsewhere to target ads"
+      },
+      "why": {
+        "en": "Other apps and websites send TikTok information about what you do on them, even when you are not using TikTok. Turning this off means that information is no longer used to choose which ads you see. You will see the same number of ads, and TikTok still uses what you do inside the app itself."
+      },
+      "tradeoffs": {
+        "en": "Ads become less relevant to you. Nothing else about the app changes, and the number of ads stays the same."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Ads personalization",
+          "Turn off Use of off-TikTok activity for ad targeting"
+        ]
+      },
+      "reference": "https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data"
+    }
+  ]
+}

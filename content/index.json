@@ -1,0 +1,19 @@
+{
+  "contentVersion": 7,
+  "generatedAt": "2026-08-16T16:30:55Z",
+  "files": [
+    {
+      "path": "apps/bytedance/com.zhiliaoapp.musically.json",
+      "sha256": "bb51b97369d317ee75dd598fd9548a029e7a78c0790ff80102aa29b9f9f9f3fb"
+    },
+    {
+      "path": "apps/meta/com.instagram.android.json",
+      "sha256": "31768ef3521b310cbb5e7b9b44ca77177b12b6ef073d42665cc88fe4bc0fecb5"
+    },
+    {
+      "path": "device/google/pixel.json",
+      "sha256": "f929d97170a31e794dc2afa60d3ae106a0fdca9b3f932fe2dcb74aa4c0705dd4"
+    }
+  ],
+  "signature": "ed25519:qCxCnYsHninmf5ts0+wtOLIwq9BgDyyKZfyKIg8we7Pa0Qo4gdES6vMIam2K6flEsniAS06l6s/KLsAqCPuhCA=="
+}

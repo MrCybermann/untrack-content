@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "package": "com.instagram.android",
+  "appName": "Instagram",
+  "publisher": "Meta",
+  "icon": "meta/com.instagram.android/icon.webp",
+  "lastUpdated": "2026-07-20",
+  "suggestions": [
+    {
+      "uuid": "9c929e75-bc86-4edf-afcd-23fed94057a2",
+      "id": "ig-private-account",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set your account to private"
+      },
+      "why": {
+        "en": "When your account is public, anyone can see your posts, followers, and activity, and third parties can scrape it. When it is private, only followers you approve can see your content, which reduces profiling and data scraping."
+      },
+      "tradeoffs": {
+        "en": "You will need to approve new followers manually, and people can no longer discover your posts as easily."
+      },
+      "steps": {
+        "en": [
+          "Open Instagram and go to your profile",
+          "Tap the menu (three lines), then Settings and privacy",
+          "Tap Account privacy",
+          "Turn on Private account"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/ig-private-account.webp",
+        "sha256": "a6a73f4ac90b084e0b3e757c97ac5e71fd0763d4ada60e43d75e5b7be3f93411"
+      },
+      "reference": "https://help.instagram.com/"
+    },
+    {
+      "uuid": "3e5cdd5a-eabb-40f8-ab7f-2f619083b58a",
+      "id": "ig-activity-status",
+      "impact": "medium",
+      "category": "activity-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Turn off activity status"
+      },
+      "why": {
+        "en": "Activity status shows others when you are online or were last active. Turning it off stops apps and contacts from tracking your usage patterns."
+      },
+      "tradeoffs": {
+        "en": "You also will not be able to see other people's activity status."
+      },
+      "steps": {
+        "en": [
+          "Open Instagram and go to your profile",
+          "Tap the menu (three lines), then Settings and privacy",
+          "Tap Messages and story replies, then Activity status",
+          "Turn off Show activity status"
+        ]
+      }
+    },
+    {
+      "uuid": "0c75a72a-e774-4dc0-8d35-121ca26b4073",
+      "id": "ig-supervision",
+      "impact": "high",
+      "category": "parental",
+      "audience": [
+        "parental"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set up supervision (Family Center)"
+      },
+      "why": {
+        "en": "Supervision lets a parent set daily time limits, see who their teen follows and is followed by, and be notified if the teen reports something. It keeps an adult involved without reading private messages."
+      },
+      "tradeoffs": {
+        "en": "Both the parent and the teen must accept the invitation, and it does not hide content or messages."
+      },
+      "steps": {
+        "en": [
+          "Open Instagram, then the menu (three lines), then Settings and privacy",
+          "Tap Supervision",
+          "Tap Create invitation and send it to your teen (or accept theirs)",
+          "Once linked, set time limits and review the following lists"
+        ]
+      },
+      "reference": "https://familycenter.instagram.com/"
+    }
+  ]
+}

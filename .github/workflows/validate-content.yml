@@ -1,0 +1,65 @@
+name: Validate content
+
+# Runs on every pull request, and on pushes to main. Two checks:
+#   1. Is each tip well-formed? (schema, folder layout, sizes, and for any
+#      visual guide: committed, under the cap, hash matches, and genuinely
+#      animated rather than a still image)
+#   2. Has any published uuid gone missing? (would silently reset users'
+#      progress, with no error and no visible symptom)
+#
+# WHAT IS DELIBERATELY NOT HERE
+# Three checks used to run alongside these and now live in the app repository,
+# because they compare this catalog against something only that repository has:
+#
+#   check_licences.py    the licence texts bundled in the APK
+#   sync_queries.py      the <queries> list in AndroidManifest.xml
+#   check_limits.py      the app's field limits against the Worker's
+#
+# The first two read what *this* repository publishes, over the network. That is
+# the seam between the two repositories, and it is the part to watch: a change
+# merged here can break a check that only runs over there.
+
+on:
+  pull_request:
+    paths:
+      - 'content/**'
+      # A guide replaced without touching its suggestion changes nothing in
+      # content/, but breaks the sha256 recorded there — and the app would then
+      # refuse the file on every phone. Without this line that lands silently.
+      - 'media/**'
+      - 'tools/**'
+  push:
+    branches: [main]
+    paths:
+      - 'content/**'
+      - 'media/**'
+      - 'tools/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # The uuid check compares this branch against the base branch, so it
+          # needs the history rather than just the latest commit.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: '3.12'
+
+      - run: pip install -r tools/requirements.txt
+
+      - name: Validate content files
+        run: python tools/validate_content.py
+
+      - name: Check that no published uuid was lost
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="origin/${{ github.base_ref }}"
+          else
+            BASE="HEAD^"
+          fi
+          echo "Comparing against $BASE"
+          python tools/check_uuid_stability.py --base "$BASE"

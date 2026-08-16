@@ -1,0 +1,16 @@
+{
+  "_comment": [
+    "Suggestions that were removed from the catalog on purpose.",
+    "",
+    "A suggestion's uuid is how the app remembers that someone ticked it off, so",
+    "uuids normally must never disappear — tools/check_uuid_stability.py fails any",
+    "pull request that loses one.",
+    "",
+    "Sometimes a removal is genuinely correct: a vendor drops the setting entirely,",
+    "or the advice becomes wrong. Record it here and the check will allow it.",
+    "",
+    "Do NOT list a uuid here just to rename a suggestion. Keep the uuid and change",
+    "the readable `id` instead — that is exactly what `id` is for."
+  ],
+  "retired": []
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "manufacturer": "google",
+    "osMin": null,
+    "osMax": null
+  },
+  "suggestions": [
+    {
+      "uuid": "6418e4c8-dcc0-4ad9-b771-e602f976816d",
+      "id": "delete-advertising-id",
+      "impact": "high",
+      "category": "advertising",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Delete your advertising ID"
+      },
+      "why": {
+        "en": "Your advertising ID lets apps and ad networks link your activity across different apps to build a profile on you. Deleting it replaces the ID with zeros, so apps can no longer track you this way."
+      },
+      "tradeoffs": {
+        "en": "The ads you see become less personalized. Nothing else stops working."
+      },
+      "steps": {
+        "en": [
+          "Open Settings, then Security & privacy, then Privacy, then Ads",
+          "Tap Delete advertising ID",
+          "Confirm"
+        ]
+      },
+      "settingsIntent": "android.settings.PRIVACY_SETTINGS",
+      "reference": "https://support.google.com/android"
+    },
+    {
+      "uuid": "231ce498-4aaa-473d-8ebd-657bcf46d592",
+      "id": "usage-diagnostics-off",
+      "impact": "medium",
+      "category": "telemetry",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Turn off Usage & diagnostics"
+      },
+      "why": {
+        "en": "Usage & diagnostics automatically sends data about how you use your device to Google. Turning it off stops that background data sharing."
+      },
+      "tradeoffs": {
+        "en": "Google receives less diagnostic data. Your experience is unaffected."
+      },
+      "steps": {
+        "en": [
+          "Open Settings, then Google",
+          "Tap the three-dot menu, then Usage & diagnostics",
+          "Turn it off"
+        ]
+      }
+    }
+  ]
+}

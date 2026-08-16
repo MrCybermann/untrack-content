@@ -1,0 +1,143 @@
+name: Suggest a privacy tip
+description: Share a privacy setting people should change on a phone or in an app.
+title: "[tip] "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. You don't need to know how to code — just fill in what you know.
+
+        A maintainer reviews every tip before it reaches users, and will fill in anything you leave blank (including the identifiers each suggestion needs — you don't have to worry about those).
+
+        **Please don't include personal information** (your own or anyone else's) — this issue is public.
+
+  - type: dropdown
+    id: target-type
+    attributes:
+      label: Is this about a phone setting or an app setting?
+      options:
+        - A phone / manufacturer setting
+        - An app setting
+    validations:
+      required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: Which phone or app?
+      description: >
+        For a phone, the manufacturer and model (e.g. "Samsung Galaxy S24, Android 15").
+        For an app, its name plus a Google Play or F-Droid link so we can identify it exactly.
+      placeholder: Instagram — https://play.google.com/store/apps/details?id=com.instagram.android
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Tip title
+      description: Short and action-oriented. 60 characters or fewer.
+      placeholder: Turn off activity status
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: One step per line, in order. Please check them against the current version of the app or OS.
+      placeholder: |
+        Open Instagram and go to your profile
+        Tap the menu, then Settings and privacy
+        Tap Messages and story replies, then Activity status
+        Turn off Show activity status
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: What happens when this setting is on versus off, and what data it affects.
+    validations:
+      required: false
+
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Trade-offs
+      description: What does the user give up by changing it, if anything? Honesty here helps people choose.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: How much does this matter?
+      description: This affects the privacy score, so please rate it honestly.
+      options:
+        - High — stops meaningful data collection
+        - Medium — worth doing
+        - Low — minor improvement
+      default: 1
+    validations:
+      required: false
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Who is this for?
+      options:
+        - Everyone
+        - Parental controls (for a phone used by a child)
+      default: 0
+    validations:
+      required: false
+
+  - type: input
+    id: regions
+    attributes:
+      label: Where does it apply?
+      description: Leave blank if it applies everywhere. Otherwise list country codes, e.g. "DE, FR".
+      placeholder: (blank = everywhere)
+    validations:
+      required: false
+
+  - type: input
+    id: reference
+    attributes:
+      label: Official source (optional)
+      description: A link to the vendor's own help page backing these steps.
+    validations:
+      required: false
+
+  - type: textarea
+    id: arabic
+    attributes:
+      label: Arabic translation (optional)
+      description: >
+        Published tips need both English and Arabic. If you can provide the Arabic, paste it here —
+        otherwise leave it blank and a maintainer will handle it.
+    validations:
+      required: false
+
+  - type: input
+    id: credit
+    attributes:
+      label: Credit (optional)
+      description: A name or handle you'd like credited. Leave blank to stay anonymous.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Before you submit
+      options:
+        - label: I checked these steps against the current version of the app or OS.
+          required: true
+        - label: I understand this issue is public and contains no personal information.
+          required: true
+        - label: I agree to license this contribution under CC-BY-SA 4.0.
+          required: true

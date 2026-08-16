@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MrCybermann/Untrack/content/schema/suggestion.schema.json",
+  "title": "Untrack content file",
+  "description": "A content file is either an app file (keyed by package) or a device file (keyed by target manufacturer).",
+  "oneOf": [
+    { "$ref": "#/$defs/appFile" },
+    { "$ref": "#/$defs/deviceFile" }
+  ],
+  "$defs": {
+    "localizedString": {
+      "description": "Text, keyed by language. English only. The object shape is kept rather than a bare string so that adding a language later is a schema change and a parser change, not a rewrite of every content file. See DESIGN.md on why the catalog is monolingual.",
+      "type": "object",
+      "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "localizedStringArray": {
+      "description": "An ordered list, keyed by language. English only, for the same reason as localizedString.",
+      "type": "object",
+      "required": ["en"],
+      "properties": {
+        "en": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    },
+    "media": {
+      "type": "object",
+      "description": "A visual guide. Animated WebP only, committed under media/ and fingerprinted so the app can verify what it downloads. See media/README.md.",
+      "required": ["type", "src", "sha256"],
+      "properties": {
+        "type": {
+          "description": "WebP only. MP4 would mean shipping a video player; GIF is worse than WebP at everything here.",
+          "enum": ["webp"]
+        },
+        "src": {
+          "description": "Path under media/, e.g. com.whatsapp/wa-read-receipts.webp",
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)+\\.webp$"
+        },
+        "sha256": {
+          "description": "Fingerprint of the file. The app checks it after downloading. Produced by: shasum -a 256 <file>",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "caption": { "$ref": "#/$defs/localizedString" }
+      },
+      "additionalProperties": false
+    },
+    "suggestion": {
+      "type": "object",
+      "required": ["uuid", "id", "impact", "category", "audience", "regions", "title", "why", "tradeoffs", "steps"],
+      "properties": {
+        "uuid": {
+          "description": "Permanent identity. Assigned once and NEVER changed — the app uses it to remember what a user has ticked off. Must be unique across the whole catalog.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "id": {
+          "description": "Human-readable label, unique within this file. Safe to rename for clarity — nothing depends on it.",
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "impact": { "enum": ["high", "medium", "low"] },
+        "category": { "type": "string", "minLength": 1 },
+        "audience": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["all", "parental"] }
+        },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^(\\*|[A-Z]{2})$" }
+        },
+        "minAppVersion": { "type": ["string", "null"] },
+        "title": { "$ref": "#/$defs/localizedString" },
+        "why": { "$ref": "#/$defs/localizedString" },
+        "tradeoffs": { "$ref": "#/$defs/localizedString" },
+        "steps": { "$ref": "#/$defs/localizedStringArray" },
+        "settingsIntent": { "type": "string", "pattern": "^android\\.settings\\.[A-Z_]+$" },
+        "media": { "$ref": "#/$defs/media" },
+        "reference": { "type": "string", "format": "uri", "pattern": "^https://" }
+      },
+      "additionalProperties": false
+    },
+    "appFile": {
+      "type": "object",
+      "required": ["schemaVersion", "package", "appName", "suggestions"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "package": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$" },
+        "appName": { "type": "string", "minLength": 1 },
+        "publisher": { "type": "string" },
+        "icon": { "type": "string", "minLength": 1 },
+        "lastUpdated": { "type": "string", "format": "date" },
+        "suggestions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/suggestion" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "deviceFile": {
+      "type": "object",
+      "required": ["schemaVersion", "target", "suggestions"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "target": {
+          "type": "object",
+          "required": ["manufacturer"],
+          "properties": {
+            "manufacturer": { "type": "string", "minLength": 1 },
+            "osMin": {
+              "description": "Lowest Android API level in which this setting exists. This describes the SETTING, not the app: it is unrelated to the app's minSdk. Use null unless the setting genuinely appeared in a specific version. A value below the app's minSdk simply never filters anything.",
+              "type": ["integer", "null"],
+              "minimum": 1
+            },
+            "osMax": {
+              "description": "Highest Android API level in which this setting still exists, for settings a manufacturer has since removed. Use null if it is still present.",
+              "type": ["integer", "null"],
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "suggestions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/suggestion" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

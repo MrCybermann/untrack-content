@@ -1,0 +1,73 @@
+name: Sign & publish content
+
+# Builds and signs content/index.json when suggestions change on main.
+# Requires a repository secret UNTRACK_SIGNING_KEY (base64 Ed25519 private key).
+#
+# WHAT PUBLISHING MEANS HERE
+# Nothing is uploaded anywhere. The signed manifest is committed to main, and
+# phones read it straight from this repository through a CDN — which is why this
+# repository is public and why the app's is not obliged to be. The app carries
+# the matching public key and verifies the signature before reading a byte, so
+# the CDN, this repository and the network are all untrusted by design.
+#
+# THE STEP THAT USED TO BE HERE
+# A sync step copied the signed catalog into the app's assets, back when both
+# lived in one repository. The app repository now fetches what this one
+# publishes instead — see tools/sync_bundled_content.py over there. That means a
+# release of the app picks up whatever is signed here at the time it is built.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/apps/**'
+      - 'content/device/**'
+
+# Only one signing run at a time. Two would race to push the manifest, and the
+# loser fails non-fast-forward — which looks like a broken pipeline and is really
+# just two jobs doing the same job. Not cancel-in-progress: a signing run that
+# has already committed must be allowed to push.
+concurrency:
+  group: sign-content
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: '3.12'
+      - run: pip install -r tools/requirements.txt
+
+      - name: Validate content
+        run: python tools/validate_content.py
+
+      - name: Build & sign manifest
+        env:
+          UNTRACK_SIGNING_KEY: ${{ secrets.UNTRACK_SIGNING_KEY }}
+        run: python tools/build_and_sign_manifest.py
+
+      - name: Verify manifest
+        run: python tools/verify_manifest.py
+
+      - name: Commit signed manifest
+        run: |
+          git config user.name "untrack-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add content/index.json
+          if git diff --cached --quiet; then
+            echo "No manifest change."
+          else
+            git commit -m "chore: update signed content manifest [skip ci]"
+            # Rebase before pushing. This job checks out the commit that
+            # triggered it, so anything merged while it was running would make
+            # the push non-fast-forward. The rebase is safe because this commit
+            # only ever touches generated files.
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

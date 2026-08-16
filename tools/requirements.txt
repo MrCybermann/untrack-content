@@ -1,0 +1,11 @@
+# Pinned exactly, not lower-bounded.
+#
+# The signing job runs a Python process with the private key in its environment.
+# `jsonschema>=4.21` there means a new release of any transitive dependency is
+# executed alongside that key, on the day it is published, with nobody looking.
+# An exact pin makes an upgrade a commit somebody reviews.
+#
+# To upgrade: change the version, run the tools locally, commit the change on
+# its own so it is legible in the history.
+jsonschema==4.23.0
+cryptography==44.0.0
