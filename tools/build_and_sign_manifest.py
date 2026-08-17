@@ -109,19 +109,53 @@ def bytes_to_sign(manifest):
     ).encode("utf-8")
 
 
+class MalformedManifest(RuntimeError):
+    """The existing manifest could not be read. Refuse rather than guess."""
+
+
 def read_previous_version():
     """Read the last contentVersion so we can increment it.
 
     The app uses this number to spot a newer catalog. It only ever goes up,
     which also means an attacker cannot replay an old catalog as if it were new.
+
+    WHY A MALFORMED MANIFEST IS FATAL RATHER THAN ZERO
+    This used to catch every parse failure and return 0, so the next signed
+    manifest would be version 1. That is the quietest possible outage: signing
+    succeeds, CI is green, the CDN serves a perfectly valid catalog — and every
+    phone already on version 12 refuses it, correctly, because the app only
+    accepts a version strictly higher than the one it has.
+
+    Recovery would mean either publishing twelve times or editing the counter by
+    hand, and the person doing it would first have to work out why a green
+    pipeline was reaching nobody.
+
+    Absent and unreadable are genuinely different questions. Absent means no
+    catalog has ever been published, and 0 is the right answer. Unreadable means
+    something is wrong that a human should look at.
     """
     if not MANIFEST_PATH.exists():
         return 0
+
     try:
         previous = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-        return int(previous.get("contentVersion", 0))
-    except (json.JSONDecodeError, ValueError, TypeError):
-        return 0
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise MalformedManifest(
+            f"{MANIFEST_PATH} is not valid JSON ({error}).\n"
+            "Signing would restart the version counter at 1, which every phone "
+            "on a higher version would refuse.\n"
+            "Restore it from git history rather than deleting it."
+        ) from error
+
+    version = previous.get("contentVersion")
+    if not isinstance(version, int) or isinstance(version, bool) or version < 0:
+        raise MalformedManifest(
+            f"{MANIFEST_PATH} has contentVersion {version!r}, which is not a "
+            "version number.\nSee above: restarting the counter is an outage, "
+            "not a fresh start."
+        )
+
+    return version
 
 
 def main():
@@ -139,8 +173,14 @@ def main():
     ]
 
     # 2. Assemble the manifest.
+    try:
+        next_version = read_previous_version() + 1
+    except MalformedManifest as error:
+        print(f"error: {error}")
+        return 1
+
     manifest = {
-        "contentVersion": read_previous_version() + 1,
+        "contentVersion": next_version,
         "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "files": files,
     }
