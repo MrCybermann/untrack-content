@@ -56,12 +56,14 @@ jobs:
         run: python tools/verify_manifest.py
 
       - name: Commit signed manifest
+        id: commit
         run: |
           git config user.name "untrack-bot"
           git config user.email "actions@users.noreply.github.com"
           git add content/index.json
           if git diff --cached --quiet; then
             echo "No manifest change."
+            echo "published=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: update signed content manifest [skip ci]"
             # Rebase before pushing. This job checks out the commit that
@@ -70,4 +72,61 @@ jobs:
             # only ever touches generated files.
             git pull --rebase origin main
             git push origin HEAD:main
+            echo "published=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # -----------------------------------------------------------------------
+      #  Tell the CDN the files changed
+      #
+      #  WHY THIS EXISTS
+      #  Phones fetch through jsDelivr, which caches a branch reference for
+      #  around twelve hours. Without this, a tip merged now reaches nobody
+      #  until that expires — and the app cannot tell the difference, because
+      #  jsDelivr's stale answer is a valid answer. The fallback to
+      #  raw.githubusercontent only fires when jsDelivr *fails*, not when it is
+      #  merely out of date.
+      #
+      #  That window is survivable for a reader and miserable for a maintainer:
+      #  you publish a tip, pull to refresh, and watch nothing happen with no
+      #  way to tell a caching delay from a broken download. This turns "twelve
+      #  hours" into "seconds".
+      #
+      #  WHY THE MANIFEST IS PURGED LAST
+      #  The manifest names the files and their hashes. Purge it first and there
+      #  is a window where a phone fetches the new manifest alongside still-
+      #  cached old files: every hash mismatches, the update is discarded, and
+      #  the person is shown an error for a release that was perfectly fine.
+      #
+      #  The other order has no bad case. A phone that arrives mid-purge reads
+      #  the old manifest, concludes it is already current, and tries again
+      #  later — by which point the files it would need are already warm.
+      #
+      #  This is the same rule as the numbered steps in the app's ContentUpdate:
+      #  never let the pointer move ahead of the thing it points at.
+      #
+      #  WHY A FAILURE HERE DOES NOT FAIL THE RELEASE
+      #  By this point the catalog is signed, committed and pushed — the release
+      #  succeeded. A purge is an optimisation on top of an expiry that will
+      #  happen anyway. Failing the workflow would turn a delay nobody would
+      #  have noticed into a red build somebody has to investigate.
+      # -----------------------------------------------------------------------
+      - name: Purge the CDN
+        if: steps.commit.outputs.published == 'true'
+        continue-on-error: true
+        run: |
+          base="https://purge.jsdelivr.net/gh/${{ github.repository }}@main/content"
+
+          purge() {
+            code=$(curl -s -m 30 -o /dev/null -w '%{http_code}' "$base/$1" || echo "000")
+            echo "  $code  $1"
+          }
+
+          # Every file the manifest names, read from the manifest rather than
+          # from a diff. A diff would be smaller and would need to be right
+          # about what changed; this needs only to be right about what exists.
+          for path in $(jq -r '.files[].path' content/index.json); do
+            purge "$path"
+          done
+
+          # Last, for the reason above.
+          purge "index.json"
