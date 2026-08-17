@@ -28,7 +28,8 @@
       "steps": {
         "en": [
           "Open Instagram and go to your profile",
-          "Tap the menu (three lines), then Settings and privacy",
+          "Tap the menu (three lines)",
+          "Scroll down to 'Who can see your content'",
           "Tap Account privacy",
           "Turn on Private account"
         ]
@@ -38,12 +39,12 @@
         "src": "com.instagram.android/ig-private-account.webp",
         "sha256": "a6a73f4ac90b084e0b3e757c97ac5e71fd0763d4ada60e43d75e5b7be3f93411"
       },
-      "reference": "https://help.instagram.com/"
+      "reference": "https://help.instagram.com/1717693135113805/"
     },
     {
       "uuid": "3e5cdd5a-eabb-40f8-ab7f-2f619083b58a",
       "id": "ig-activity-status",
-      "impact": "medium",
+      "impact": "low",
       "category": "activity-visibility",
       "audience": [
         "all"
@@ -63,11 +64,18 @@
       "steps": {
         "en": [
           "Open Instagram and go to your profile",
-          "Tap the menu (three lines), then Settings and privacy",
+          "Tap the menu (three lines)",
+          "Scroll down to 'How others can interact with you'",
           "Tap Messages and story replies, then Activity status",
           "Turn off Show activity status"
         ]
-      }
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/ig-activity-status.webp",
+        "sha256": "784b36cca8000cc950ea9b7eb9bd395b9ae3a05d25e267c3a551a096e0aa5449"
+      },
+      "reference": "https://help.instagram.com/1164377657035425/"
     },
     {
       "uuid": "0c75a72a-e774-4dc0-8d35-121ca26b4073",
@@ -91,13 +99,14 @@
       },
       "steps": {
         "en": [
-          "Open Instagram, then the menu (three lines), then Settings and privacy",
-          "Tap Supervision",
+          "Open Instagram, then the menu (three lines)",
+          "Scroll down to 'Family Center'",
+          "Tap Supervision for Teen Accounts",
           "Tap Create invitation and send it to your teen (or accept theirs)",
           "Once linked, set time limits and review the following lists"
         ]
       },
-      "reference": "https://familycenter.instagram.com/"
+      "reference": "https://www.meta.com/en-gb/help/supervision/1194312565575476/?srsltid=AfmBOoppfHw-88jv4316IM8P_rQY5e0vG3iYpTtf-SYlG7vWGq4sYEeg"
     }
   ]
 }
