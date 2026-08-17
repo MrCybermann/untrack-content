@@ -80,8 +80,6 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Sign and publish
         id: publish
-        env:
-          UNTRACK_SIGNING_KEY: ${{ secrets.UNTRACK_SIGNING_KEY }}
         run: |
           set -euo pipefail
 
@@ -123,8 +121,21 @@ jobs:
               echo "--- No published catalog yet; nothing to compare uuids against"
             fi
 
+            # WHY THE SECRET IS ON THIS ONE LINE AND NOT ON THE STEP
+            #
+            # An `env:` block on the step puts the private key in the environment
+            # of everything the step runs: the validator and every library it
+            # imports, the uuid checker, the verifier, git, and every child
+            # process any of them spawn. None of those needs it, and a signing
+            # key that half a dozen unrelated programs can read is a blast radius
+            # rather than a secret.
+            #
+            # This form scopes it to the single process that signs. It survives
+            # the retry loop because it is evaluated per invocation, which is why
+            # the loop was not a reason to widen it in the first place.
             echo "--- Signing"
-            python tools/build_and_sign_manifest.py
+            UNTRACK_SIGNING_KEY="${{ secrets.UNTRACK_SIGNING_KEY }}" \
+              python tools/build_and_sign_manifest.py
             python tools/verify_manifest.py
 
             git add content/index.json
