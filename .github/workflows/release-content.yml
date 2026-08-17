@@ -9,6 +9,24 @@ name: Sign & publish content
 # repository is public and why the app's is not obliged to be. The app carries
 # the matching public key and verifies the signature before reading a byte, so
 # the CDN, this repository and the network are all untrusted by design.
+#
+# THIS JOB HAS BEEN WRONG TWICE. BOTH FAILURES ARE WORTH KNOWING ABOUT.
+#
+# First it checked out the triggering commit, signed that, then rebased its
+# manifest commit onto main before pushing. Two content commits landing close
+# together meant replaying a manifest built from the older tree over the newer
+# content: new files, old hashes. The app fails closed, so no phone was harmed,
+# but publishing silently broke until the next run.
+#
+# Removing the rebase fixed that and created the opposite fault. A fast-forward
+# push fails if anything reaches main mid-run — and an unrelated commit, a
+# documentation change say, does not match the path filters below, so no
+# replacement run starts. The signed content is simply never published, and the
+# only signal is a red tick somebody has to notice.
+#
+# The answer to both is the same and is what the script below does: never carry
+# a manifest across a change to main. If main moved, throw the generated commit
+# away and build a new one from what main now contains.
 
 on:
   push:
@@ -20,11 +38,13 @@ on:
       # serving the old bytes until its cache expired — and the app would report
       # the new hash mismatching as a corrupt guide.
       - 'media/**'
+  # So a run stranded by the race described above can be restarted without
+  # inventing a commit.
+  workflow_dispatch:
 
-# Only one signing run at a time. Two would race to push the manifest, and the
-# loser fails non-fast-forward — which looks like a broken pipeline and is really
-# just two jobs doing the same job. Not cancel-in-progress: a signing run that
-# has already committed must be allowed to push.
+# Only one signing run at a time. Two would race to push the manifest, and while
+# the retry below would recover, serialising is cheaper than recovering. Not
+# cancel-in-progress: a run that has already pushed must be allowed to purge.
 concurrency:
   group: sign-content
   cancel-in-progress: false
@@ -36,27 +56,11 @@ jobs:
   sign:
     runs-on: ubuntu-latest
     steps:
-      # ---------------------------------------------------------------------
-      #  WHY THIS CHECKS OUT main RATHER THAN THE TRIGGERING COMMIT
-      #  The default checkout is the commit that fired the workflow. That was
-      #  fine until you consider two content commits landing close together:
-      #  this job signs the tree at its own commit, then had to rebase onto main
-      #  before pushing — which replayed a manifest built from the older tree on
-      #  top of the newer content. The result is new files with old hashes.
-      #
-      #  The app fails closed on that, so nobody is harmed, but publishing is
-      #  broken until the next run fixes it, and the purge below would have
-      #  already pushed the mismatch to the CDN.
-      #
-      #  Signing the head of main removes the race rather than recovering from
-      #  it: whatever this job signs is what main actually contains. With
-      #  `concurrency` serialising runs, the second job re-signs the combined
-      #  tree and both commits end up correctly covered.
-      # ---------------------------------------------------------------------
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: main
-          # check_uuid_stability needs a parent to compare against.
+          # The uuid check compares against the last *published* catalog, which
+          # may be several commits back.
           fetch-depth: 0
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
@@ -64,42 +68,94 @@ jobs:
           python-version: '3.12'
       - run: pip install -r tools/requirements.txt
 
-      - name: Validate content
-        run: python tools/validate_content.py
-
-      # Runs here as well as in validate-content.yml, and the duplication is the
-      # point: those are separate workflows, so validation failing did not stop
-      # signing succeeding. A lost uuid silently resets someone's progress, which
-      # is not something to publish while a red tick sits on another workflow.
-      - name: No published uuid was lost
-        run: python tools/check_uuid_stability.py --base HEAD^
-
-      - name: Build & sign manifest
+      # -----------------------------------------------------------------------
+      #  Sign, and keep signing until what is pushed matches what is on main.
+      #
+      #  WHY THIS IS ONE STEP AND NOT FIVE
+      #  Validation, the uuid check, signing and verification all have to happen
+      #  *after* the last fetch of main and *before* the push, or the manifest
+      #  describes a tree that is no longer there. Separate steps cannot be
+      #  re-run as a group, so the loop has to contain all of them. The echoed
+      #  headers below are the readability that structure would have given.
+      # -----------------------------------------------------------------------
+      - name: Sign and publish
+        id: publish
         env:
           UNTRACK_SIGNING_KEY: ${{ secrets.UNTRACK_SIGNING_KEY }}
-        run: python tools/build_and_sign_manifest.py
-
-      - name: Verify manifest
-        run: python tools/verify_manifest.py
-
-      - name: Commit signed manifest
-        id: commit
         run: |
+          set -euo pipefail
+
           git config user.name "untrack-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add content/index.json
-          if git diff --cached --quiet; then
-            echo "No manifest change."
-            echo "published=false" >> "$GITHUB_OUTPUT"
-          else
-            git commit -m "chore: update signed content manifest [skip ci]"
-            # No rebase. This job checked out main, so a fast-forward push is
-            # the only correct outcome — and if main moved underneath it, the
-            # push failing is the right answer. A rebase here is what replayed
-            # an old manifest over new content.
-            git push origin HEAD:main
-            echo "published=true" >> "$GITHUB_OUTPUT"
+
+          published=false
+
+          for attempt in 1 2 3; do
+            echo "::group::Attempt $attempt"
+
+            # Start from whatever main contains right now. --hard discards any
+            # manifest generated by a previous attempt: that manifest described
+            # a different tree, and carrying it forward is the original bug.
+            git fetch --quiet origin main
+            git reset --quiet --hard origin/main
+
+            echo "--- Validating content"
+            python tools/validate_content.py
+
+            # WHY THE BASE IS THE LAST PUBLISHED CATALOG AND NOT HEAD^
+            #
+            # HEAD^ compares against the previous commit, which is only the
+            # right question when every commit gets its own signing run. It does
+            # not. This job signs the head of main, so two content commits
+            # landing together are covered by one run — and a uuid removed in
+            # the first is absent from both sides of a HEAD^ comparison, which
+            # therefore passes.
+            #
+            # The last commit touching content/index.json is the last state that
+            # was actually published to phones. Anything lost since then is a
+            # uuid a phone has already recorded progress against, which is
+            # exactly the set worth protecting.
+            base=$(git log -1 --format=%H -- content/index.json || true)
+            if [ -n "$base" ]; then
+              echo "--- Checking uuids against the last published catalog ($base)"
+              python tools/check_uuid_stability.py --base "$base"
+            else
+              echo "--- No published catalog yet; nothing to compare uuids against"
+            fi
+
+            echo "--- Signing"
+            python tools/build_and_sign_manifest.py
+            python tools/verify_manifest.py
+
+            git add content/index.json
+            if git diff --cached --quiet; then
+              echo "No manifest change."
+              echo "::endgroup::"
+              break
+            fi
+
+            git commit --quiet -m "chore: update signed content manifest [skip ci]"
+
+            if git push --quiet origin HEAD:main; then
+              echo "Published."
+              published=true
+              echo "::endgroup::"
+              break
+            fi
+
+            # Someone else pushed between the fetch and the push. The manifest
+            # just built describes the tree from before that push, so it is
+            # thrown away at the top of the next attempt rather than rebased.
+            echo "main moved during the run. Rebuilding from the new head."
+            echo "::endgroup::"
+          done
+
+          if [ "$published" = false ] && ! git diff --quiet HEAD origin/main; then
+            echo "::error::Could not publish after 3 attempts — main is changing faster than this job can sign. Re-run when it settles."
+            exit 1
           fi
+
+          echo "published=$published" >> "$GITHUB_OUTPUT"
 
       # -----------------------------------------------------------------------
       #  Tell the CDN the files changed
@@ -119,29 +175,18 @@ jobs:
       #  bytes — every hash mismatches, the update is discarded, and someone is
       #  shown an error for a release that was fine.
       #
-      #  Going the other way has no bad case: a phone arriving mid-purge reads
-      #  the old manifest, concludes it is already current, and tries again
-      #  later, by which point everything it needs is warm.
-      #
-      #  Same rule as the numbered steps in the app's ContentUpdate: never let
-      #  the pointer move ahead of the thing it points at.
-      #
       #  WHY MEDIA IS READ FROM THE CONTENT FILES AND NOT THE MANIFEST
       #  The manifest signs JSON only. Guides are fetched separately and carry
       #  their own hash inside the suggestion that references them, so the
       #  manifest never lists them — an earlier version of this step purged only
       #  what the manifest named and therefore never purged a guide at all.
-      #  Replacing a .webp left jsDelivr serving the old bytes, which the app
-      #  correctly reported as a corrupt guide.
       #
       #  WHY A FAILURE HERE DOES NOT FAIL THE RELEASE
-      #  By this point the catalog is signed, committed and pushed — the release
-      #  succeeded. A purge is an optimisation on top of an expiry that happens
-      #  anyway. Failing the workflow would turn a delay nobody would notice into
-      #  a red build somebody has to investigate.
+      #  By this point the catalog is signed, committed and pushed. A purge is an
+      #  optimisation on top of an expiry that happens anyway.
       # -----------------------------------------------------------------------
       - name: Purge the CDN
-        if: steps.commit.outputs.published == 'true'
+        if: steps.publish.outputs.published == 'true'
         continue-on-error: true
         run: |
           base="https://purge.jsdelivr.net/gh/${{ github.repository }}@main"
@@ -152,10 +197,6 @@ jobs:
           }
 
           echo "media:"
-          # Both places a media path can appear: a suggestion's guide, and an
-          # app's icon. `// empty` keeps jq quiet about the ones that have
-          # neither. Sorted and deduplicated so a guide shared between two
-          # suggestions is purged once.
           jq -r '[ (.suggestions[]?.media?.src // empty), (.icon // empty) ] | .[]' \
             content/apps/*/*.json content/device/*/*.json 2>/dev/null \
             | sort -u \
