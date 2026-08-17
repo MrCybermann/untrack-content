@@ -77,6 +77,6 @@ usually unnecessary. An optional catalog logo (an app file's `icon` field) is
 used only when showing an app in search before it is installed: `.webp` or
 `.png`, at most 100 KB. App logos are trademarks of their owners and are not
 covered by the content licence — see
-[content/LICENSE-CONTENT.md](../content/LICENSE-CONTENT.md).
+[LICENSE-CONTENT.md](../LICENSE-CONTENT.md).
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for full guidelines.
