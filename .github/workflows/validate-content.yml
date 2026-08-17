@@ -62,20 +62,49 @@ jobs:
         run: python tools/validate_content.py
 
       # -----------------------------------------------------------------------
-      #  WHY THE MANIFEST IS VERIFIED HERE
-      #  content/index.json is generated and signed by the bot, and until now
-      #  nothing in this workflow looked at it. Editing it by hand — changing a
-      #  version, a hash, a path — passed validation and uuid stability, because
-      #  neither reads it. Only verify_manifest.py would notice, and that ran
-      #  exclusively in the signing job, which is too late: by then the edit is
-      #  already on main.
+      #  index.json is generated. Nobody edits it by hand.
       #
-      #  Running it here means a hand-edited manifest fails on the pull request.
-      #  It costs nothing on the ordinary path, because the bot's own manifest
-      #  verifies by construction.
+      #  WHY THIS IS NOT `verify_manifest.py`
+      #  It was, briefly, and that was wrong in a way worth recording. Running
+      #  the verifier here fails on *every ordinary content change*: between
+      #  editing a tip and the signing job regenerating the manifest, the
+      #  recorded hashes are supposed to be stale. Verifying at that moment
+      #  tests whether signing has already happened, which it has not — so the
+      #  check failed on the happy path, on the first push after it was added.
+      #
+      #  The actual thing worth preventing is a human editing the manifest: a
+      #  changed version, a hand-patched hash, a removed entry. That is not a
+      #  question about the file's contents, which the next signing run
+      #  overwrites regardless. It is a question about who touched it.
+      #
+      #  Three dots rather than two on a pull request, so a branch that merged
+      #  main in does not inherit the bot's manifest commit as its own change.
+      #
+      #  The bot's commits carry [skip ci], so this workflow never sees them.
+      #  Any run that reaches here and finds index.json modified is looking at
+      #  a person.
       # -----------------------------------------------------------------------
-      - name: Verify the signed manifest
-        run: python tools/verify_manifest.py
+      - name: The manifest was not hand-edited
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RANGE="origin/${{ github.base_ref }}...HEAD"
+          else
+            RANGE="HEAD^..HEAD"
+          fi
+
+          if git diff --name-only "$RANGE" | grep -qx 'content/index.json'; then
+            echo "::error::content/index.json is generated and signed by CI, and this change edits it."
+            echo ""
+            echo "There is no need to edit it by hand: the signing job rebuilds it from"
+            echo "the content files on every publish, so any edit here is overwritten"
+            echo "on the next run at best, and published unverifiable at worst."
+            echo ""
+            echo "Revert it and let the signing job regenerate it:"
+            echo "    git checkout origin/main -- content/index.json"
+            exit 1
+          fi
+
+          echo "✓ content/index.json untouched by this change"
 
       # -----------------------------------------------------------------------
       #  Say something before a limit is reached, not when it is
