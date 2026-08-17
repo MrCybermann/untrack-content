@@ -64,7 +64,19 @@
           "pattern": "^[a-z0-9][a-z0-9-]*$"
         },
         "impact": { "enum": ["high", "medium", "low"] },
-        "category": { "type": "string", "minLength": 1 },
+        "category": {
+          "description": "Grouping label. MUST MATCH the Category enum in the app's Submission.kt — the app's suggest-a-tip form can only produce these, so a pull request introducing a new one creates a value no contributor using the app could ever have sent. check_categories.py in the app repository compares the two lists.",
+          "enum": [
+            "advertising",
+            "account-visibility",
+            "activity-visibility",
+            "location",
+            "data-sharing",
+            "permissions",
+            "telemetry",
+            "parental"
+          ]
+        },
         "audience": {
           "type": "array",
           "minItems": 1,

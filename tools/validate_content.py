@@ -43,6 +43,16 @@
 ===============================================================================
 """
 
+# Type annotations are not evaluated at runtime, so `tuple[int, int] | None`
+# below works on Python 3.7 upwards rather than 3.10 upwards.
+#
+# WHY THIS MATTERS HERE MORE THAN IT LOOKS
+# CI pins Python 3.12 and a maintainer's machine may ship anything. Modern
+# annotation syntax therefore passes CI and fails locally — which is the wrong
+# way round, because the person it fails for is the one who cannot see why, and
+# the check that was supposed to run before pushing is the thing that broke.
+from __future__ import annotations
+
 import hashlib
 import json
 import re
@@ -72,6 +82,14 @@ SCHEMA_PATH = CONTENT_DIR / "schema" / "suggestion.schema.json"
 # Must match MAX_BYTES in the app's MediaStore, which refuses to read further
 # than this when downloading.
 MEDIA_SIZE_LIMIT = 2 * 1024 * 1024
+
+# The longest edge a guide may declare, in pixels.
+#
+# Must match MAX_DECODED_EDGE_PX in the app's GuidePlayer, which samples anything
+# larger down rather than allocating it. Guides are recorded on a phone and shown
+# in a card narrower than a phone screen, so this is already generous; a sensibly
+# recorded guide is a third of it.
+MEDIA_MAX_EDGE_PX = 1440
 
 ICON_SIZE_LIMIT = 100 * 1024  # 100 KB
 ICON_EXTENSIONS = {".webp", ".png"}
@@ -275,6 +293,37 @@ def animation_frames(path: Path) -> int:
     return frames
 
 
+def webp_canvas(path: Path) -> tuple[int, int] | None:
+    """The declared canvas size of a WebP, or None if it cannot be read.
+
+    Parses the container rather than decoding, because the whole point is to
+    know how large a decode would be *before* doing one.
+
+    Two chunk types carry it. VP8X is the extended header an animated file
+    always has, and stores width-1 and height-1 as 24-bit little-endian. ANMF
+    frame headers use the same encoding for each frame, but the canvas is what
+    a decoder allocates, so VP8X is the one that matters.
+    """
+    raw = path.read_bytes()
+    if raw[0:4] != b"RIFF" or raw[8:12] != b"WEBP":
+        return None
+
+    i = 12
+    while i + 8 <= len(raw):
+        fourcc = raw[i:i + 4]
+        size = int.from_bytes(raw[i + 4:i + 8], "little")
+        body = raw[i + 8:i + 8 + size]
+
+        if fourcc == b"VP8X" and len(body) >= 10:
+            width = int.from_bytes(body[4:7], "little") + 1
+            height = int.from_bytes(body[7:10], "little") + 1
+            return width, height
+
+        i += 8 + size + (size & 1)
+
+    return None
+
+
 def check_media(problems, path, data):
     """Rule 5b: a declared visual guide must exist, match its hash, and move.
 
@@ -328,6 +377,30 @@ def check_media(problems, path, data):
                 (path, f"media '{src}' does not match its sha256. "
                        f"Declared {declared}, file is {actual}.")
             )
+
+        # A file under the size cap can still declare an enormous canvas — WebP
+        # compresses a flat settings screen extremely well, so 8000 × 8000 fits
+        # in a few hundred kilobytes and becomes 256 MB once decoded. Bytes on
+        # disk and bytes in memory are different questions and only one was
+        # being asked.
+        canvas = webp_canvas(media_path)
+        if canvas is None:
+            problems.append((
+                path,
+                f"media '{src}' is not a readable WebP container — no VP8X "
+                "header found. Re-convert it.",
+            ))
+        else:
+            width, height = canvas
+            if max(width, height) > MEDIA_MAX_EDGE_PX:
+                problems.append((
+                    path,
+                    f"media '{src}' is {width}x{height}, and its longest edge is "
+                    f"over {MEDIA_MAX_EDGE_PX}px. A guide is a recording of a "
+                    "phone screen shown in a card narrower than one, so this is "
+                    "far more pixels than anything will display — and the app "
+                    "would have to allocate them all to decode it.",
+                ))
 
         frames = animation_frames(media_path)
         if frames < 2:
