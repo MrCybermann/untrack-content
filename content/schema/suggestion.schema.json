@@ -76,7 +76,6 @@
           "minItems": 1,
           "items": { "type": "string", "pattern": "^(\\*|[A-Z]{2})$" }
         },
-        "minAppVersion": { "type": ["string", "null"] },
         "title": { "$ref": "#/$defs/localizedString" },
         "why": { "$ref": "#/$defs/localizedString" },
         "tradeoffs": { "$ref": "#/$defs/localizedString" },
@@ -95,7 +94,11 @@
         "package": { "type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$" },
         "appName": { "type": "string", "minLength": 1 },
         "publisher": { "type": "string" },
-        "icon": { "type": "string", "minLength": 1 },
+        "icon": {
+          "type": "string",
+          "minLength": 1,
+          "description": "RESERVED - not read by the app. Setting this has no effect on any screen today; it is kept so the field does not have to be reintroduced when app search grows logos. If you do set it, the file must be committed under media/ at exactly this path: a declaration pointing at a file that is not there is a broken reference inside signed content, and nothing at publish time will catch it. App names and logos are trademarks of their owners and are NOT covered by the content licence - only add one where such identifying use is appropriate."
+        },
         "lastUpdated": { "type": "string", "format": "date" },
         "suggestions": {
           "type": "array",

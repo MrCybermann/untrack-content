@@ -9,12 +9,6 @@ name: Sign & publish content
 # repository is public and why the app's is not obliged to be. The app carries
 # the matching public key and verifies the signature before reading a byte, so
 # the CDN, this repository and the network are all untrusted by design.
-#
-# THE STEP THAT USED TO BE HERE
-# A sync step copied the signed catalog into the app's assets, back when both
-# lived in one repository. The app repository now fetches what this one
-# publishes instead — see tools/sync_bundled_content.py over there. That means a
-# release of the app picks up whatever is signed here at the time it is built.
 
 on:
   push:
@@ -22,6 +16,10 @@ on:
     paths:
       - 'content/apps/**'
       - 'content/device/**'
+      # Replacing a guide changes no JSON, so without this the CDN would go on
+      # serving the old bytes until its cache expired — and the app would report
+      # the new hash mismatching as a corrupt guide.
+      - 'media/**'
 
 # Only one signing run at a time. Two would race to push the manifest, and the
 # loser fails non-fast-forward — which looks like a broken pipeline and is really
@@ -38,7 +36,29 @@ jobs:
   sign:
     runs-on: ubuntu-latest
     steps:
+      # ---------------------------------------------------------------------
+      #  WHY THIS CHECKS OUT main RATHER THAN THE TRIGGERING COMMIT
+      #  The default checkout is the commit that fired the workflow. That was
+      #  fine until you consider two content commits landing close together:
+      #  this job signs the tree at its own commit, then had to rebase onto main
+      #  before pushing — which replayed a manifest built from the older tree on
+      #  top of the newer content. The result is new files with old hashes.
+      #
+      #  The app fails closed on that, so nobody is harmed, but publishing is
+      #  broken until the next run fixes it, and the purge below would have
+      #  already pushed the mismatch to the CDN.
+      #
+      #  Signing the head of main removes the race rather than recovering from
+      #  it: whatever this job signs is what main actually contains. With
+      #  `concurrency` serialising runs, the second job re-signs the combined
+      #  tree and both commits end up correctly covered.
+      # ---------------------------------------------------------------------
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          # check_uuid_stability needs a parent to compare against.
+          fetch-depth: 0
+
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: '3.12'
@@ -46,6 +66,13 @@ jobs:
 
       - name: Validate content
         run: python tools/validate_content.py
+
+      # Runs here as well as in validate-content.yml, and the duplication is the
+      # point: those are separate workflows, so validation failing did not stop
+      # signing succeeding. A lost uuid silently resets someone's progress, which
+      # is not something to publish while a red tick sits on another workflow.
+      - name: No published uuid was lost
+        run: python tools/check_uuid_stability.py --base HEAD^
 
       - name: Build & sign manifest
         env:
@@ -66,11 +93,10 @@ jobs:
             echo "published=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: update signed content manifest [skip ci]"
-            # Rebase before pushing. This job checks out the commit that
-            # triggered it, so anything merged while it was running would make
-            # the push non-fast-forward. The rebase is safe because this commit
-            # only ever touches generated files.
-            git pull --rebase origin main
+            # No rebase. This job checked out main, so a fast-forward push is
+            # the only correct outcome — and if main moved underneath it, the
+            # push failing is the right answer. A rebase here is what replayed
+            # an old manifest over new content.
             git push origin HEAD:main
             echo "published=true" >> "$GITHUB_OUTPUT"
           fi
@@ -86,47 +112,61 @@ jobs:
       #  raw.githubusercontent only fires when jsDelivr *fails*, not when it is
       #  merely out of date.
       #
-      #  That window is survivable for a reader and miserable for a maintainer:
-      #  you publish a tip, pull to refresh, and watch nothing happen with no
-      #  way to tell a caching delay from a broken download. This turns "twelve
-      #  hours" into "seconds".
+      #  THE ORDER IS LEAVES FIRST, ROOT LAST, AND IT MATTERS
+      #  Media is named by the content files; content files are named, with
+      #  their hashes, by the manifest. Purging a parent before its children
+      #  leaves a window where a phone reads new references against cached old
+      #  bytes — every hash mismatches, the update is discarded, and someone is
+      #  shown an error for a release that was fine.
       #
-      #  WHY THE MANIFEST IS PURGED LAST
-      #  The manifest names the files and their hashes. Purge it first and there
-      #  is a window where a phone fetches the new manifest alongside still-
-      #  cached old files: every hash mismatches, the update is discarded, and
-      #  the person is shown an error for a release that was perfectly fine.
-      #
-      #  The other order has no bad case. A phone that arrives mid-purge reads
+      #  Going the other way has no bad case: a phone arriving mid-purge reads
       #  the old manifest, concludes it is already current, and tries again
-      #  later — by which point the files it would need are already warm.
+      #  later, by which point everything it needs is warm.
       #
-      #  This is the same rule as the numbered steps in the app's ContentUpdate:
-      #  never let the pointer move ahead of the thing it points at.
+      #  Same rule as the numbered steps in the app's ContentUpdate: never let
+      #  the pointer move ahead of the thing it points at.
+      #
+      #  WHY MEDIA IS READ FROM THE CONTENT FILES AND NOT THE MANIFEST
+      #  The manifest signs JSON only. Guides are fetched separately and carry
+      #  their own hash inside the suggestion that references them, so the
+      #  manifest never lists them — an earlier version of this step purged only
+      #  what the manifest named and therefore never purged a guide at all.
+      #  Replacing a .webp left jsDelivr serving the old bytes, which the app
+      #  correctly reported as a corrupt guide.
       #
       #  WHY A FAILURE HERE DOES NOT FAIL THE RELEASE
       #  By this point the catalog is signed, committed and pushed — the release
-      #  succeeded. A purge is an optimisation on top of an expiry that will
-      #  happen anyway. Failing the workflow would turn a delay nobody would
-      #  have noticed into a red build somebody has to investigate.
+      #  succeeded. A purge is an optimisation on top of an expiry that happens
+      #  anyway. Failing the workflow would turn a delay nobody would notice into
+      #  a red build somebody has to investigate.
       # -----------------------------------------------------------------------
       - name: Purge the CDN
         if: steps.commit.outputs.published == 'true'
         continue-on-error: true
         run: |
-          base="https://purge.jsdelivr.net/gh/${{ github.repository }}@main/content"
+          base="https://purge.jsdelivr.net/gh/${{ github.repository }}@main"
 
           purge() {
             code=$(curl -s -m 30 -o /dev/null -w '%{http_code}' "$base/$1" || echo "000")
             echo "  $code  $1"
           }
 
-          # Every file the manifest names, read from the manifest rather than
-          # from a diff. A diff would be smaller and would need to be right
-          # about what changed; this needs only to be right about what exists.
+          echo "media:"
+          # Both places a media path can appear: a suggestion's guide, and an
+          # app's icon. `// empty` keeps jq quiet about the ones that have
+          # neither. Sorted and deduplicated so a guide shared between two
+          # suggestions is purged once.
+          jq -r '[ (.suggestions[]?.media?.src // empty), (.icon // empty) ] | .[]' \
+            content/apps/*/*.json content/device/*/*.json 2>/dev/null \
+            | sort -u \
+            | while IFS= read -r src; do
+                [ -n "$src" ] && purge "media/$src"
+              done
+
+          echo "content:"
           for path in $(jq -r '.files[].path' content/index.json); do
-            purge "$path"
+            purge "content/$path"
           done
 
-          # Last, for the reason above.
-          purge "index.json"
+          echo "manifest:"
+          purge "content/index.json"
