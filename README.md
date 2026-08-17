@@ -5,6 +5,10 @@ shows: what to change, why it matters, what it costs you, and the steps.
 
 This repository is the product. The app is a reader for it.
 
+> **About to change a tip?** [BEFORE-YOU-PUSH.md](BEFORE-YOU-PUSH.md) is the
+> four-step routine — the same four whether you are editing an existing tip or
+> adding a new app.
+
 ## What is here
 
 ```

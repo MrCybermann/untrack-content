@@ -3,6 +3,10 @@
 How a tip gets from an idea onto someone's phone, and what to do when it does
 not.
 
+> **Just want the routine?** [BEFORE-YOU-PUSH.md](BEFORE-YOU-PUSH.md) is the
+> four commands and nothing else. This document is the long version, and Part 2
+> is the troubleshooting guide you will want when something does not appear.
+
 Everything here happens in this repository. The app lives in `Untrack`, and its
 own playbook covers building and releasing the APK — you need it only when a tip
 requires a *code* change, which is rarer than it sounds and is explained below.
@@ -103,18 +107,43 @@ shasum -a 256 media/com.instagram.android/ig-private-account.webp
 
 ## 4. Run the local checks
 
+**Two commands, before every push. Nothing else.**
+
 ```bash
-python3 tools/validate_content.py                      # schema, media, sizes
+python3 tools/validate_content.py --headroom
 python3 tools/check_uuid_stability.py --base origin/main
 ```
 
-These are the two CI runs on every change here. Running them locally costs
-seconds and saves a round trip.
+These are the same checks CI runs, so a pass here means a green pipeline. They
+take about a second and save a round trip.
 
-Do **not** sign locally unless you have a specific reason. `contentVersion`
-increments on every signing run, so a local signature puts this working copy
-ahead of what CI will produce and guarantees a conflict on push. Signing is CI's
-job; see step 6.
+What the first one covers, so you are not double-checking it by hand:
+
+| | |
+|---|---|
+| Schema | field names, types, English present, `category` from the allowed set |
+| Folder structure | `apps/<publisher>/<package>.json`, `device/<maker>/<skin>.json` |
+| Filenames | an app file's name matches the `package` inside it |
+| Identifiers | `id` unique per file, `uuid` unique across the whole catalog |
+| Guides | file committed, under 2 MB, **sha256 matches**, and **more than one animation frame** |
+| Icons | committed, right extension, under 100 KB |
+| App limits | per-file, file count, total size, manifest size |
+| Paths | URL-safe — a `?` in a filename would break the download address |
+| `--headroom` | how close the catalog is to each limit |
+
+The second one is separate because it asks a question the first cannot: not
+"is this file correct" but "did this change take away a uuid somebody's phone
+has already recorded progress against". It needs the previous state to compare
+with, which is why it takes a base.
+
+**Never edit `content/index.json`.** It is generated and signed by CI, which
+rebuilds it from the content files on every publish — so a hand edit is
+overwritten at best and published unverifiable at worst. CI rejects any change
+that touches it.
+
+**Do not sign locally either.** `contentVersion` increments on every signing run,
+so a local signature puts this working copy ahead of what CI will produce and
+guarantees a conflict on push.
 
 ## 5. Commit and push
 
