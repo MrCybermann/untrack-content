@@ -1,6 +1,6 @@
 {
-  "contentVersion": 11,
-  "generatedAt": "2026-08-17T09:52:08Z",
+  "contentVersion": 12,
+  "generatedAt": "2026-08-17T16:25:02Z",
   "files": [
     {
       "path": "apps/bytedance/com.zhiliaoapp.musically.json",
@@ -8,12 +8,12 @@
     },
     {
       "path": "apps/meta/com.instagram.android.json",
-      "sha256": "31768ef3521b310cbb5e7b9b44ca77177b12b6ef073d42665cc88fe4bc0fecb5"
+      "sha256": "8cdd4769f4a703db357fe6eabcc41a44326c280e5a7d773c2749caf3971870f4"
     },
     {
       "path": "device/google/pixel.json",
       "sha256": "f929d97170a31e794dc2afa60d3ae106a0fdca9b3f932fe2dcb74aa4c0705dd4"
     }
   ],
-  "signature": "ed25519:GGnii0mBPZw7DhOiun9z4YdXBYNr+I9KIddLnfcXYtEhcdgfOlBcZrgoVKPC7MEtlFiaNZTtmP6wNjiZVt1/Bg=="
+  "signature": "ed25519:TyA3TH7xwK+hX/BjV0VLh+EsXuUc0R6FmV8snHT0sVHJFa8iQLyKByNSxPOmoKnLsZMkP0wkxHUu6TcRCBZlBQ=="
 }
