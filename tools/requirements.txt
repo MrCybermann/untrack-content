@@ -1,11 +1,41 @@
 # Pinned exactly, not lower-bounded.
 #
-# The signing job runs a Python process with the private key in its environment.
-# `jsonschema>=4.21` there means a new release of any transitive dependency is
-# executed alongside that key, on the day it is published, with nobody looking.
-# An exact pin makes an upgrade a commit somebody reviews.
+# This is the copy that matters most. The signing job installs it and then runs
+# a Python process with the private key in its environment, so `jsonschema>=4.21`
+# here would mean a new release executed alongside that key on the day it is
+# published, with nobody looking. An exact pin makes an upgrade a commit
+# somebody reviews.
 #
-# To upgrade: change the version, run the tools locally, commit the change on
-# its own so it is legible in the history.
+# The app repository has its own copy, for the tools that verify what this one
+# publishes. THEY MUST BE UPGRADED TOGETHER. They were not, once: cryptography
+# went to 50.0.0 over there and stayed at 44.0.0 here — the upgrade landed in
+# the repository where it mattered least, and the one holding the signing secret
+# kept the old version. Nothing compared them.
+#
+# WHAT THIS DOES NOT DO, SAID PLAINLY
+# An earlier version of this comment claimed the pins stopped "a new release of
+# any transitive dependency" running next to the key. They do not. Pinning two
+# direct packages leaves everything they depend on free to float, so the risk it
+# described is still there — narrowed to the transitive set, not removed.
+#
+# Closing it properly needs a fully resolved lock file with hashes and
+# `pip install --require-hashes`. That is the right answer for a project
+# installing dozens of packages. Here it is two, both from major maintainers,
+# and the lock file would need regenerating on every upgrade of either. The
+# judgement is that the maintenance is not worth it at this size — but the
+# reasoning should be visible, rather than a comment implying protection that
+# was never there.
+#
+# Revisit if this list grows past a handful, or if either package changes hands.
+#
+# To upgrade: change the version in BOTH repositories, run the tools locally,
+# and commit the change on its own so it is legible in the history.
 jsonschema==4.23.0
-cryptography==44.0.0
+
+# 44.0.0 until August 2026. It carried advisories in its bundled OpenSSL and
+# PKCS#7 paths, neither of which this project touches — the only API used here
+# is Ed25519PrivateKey/Ed25519PublicKey and sign/verify. Upgraded anyway: "we do
+# not call the vulnerable function" is a claim that has to be re-verified on
+# every future change, and staying current is cheaper than maintaining that
+# argument.
+cryptography==50.0.0
