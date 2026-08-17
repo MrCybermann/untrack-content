@@ -35,6 +35,13 @@ on:
       - 'media/**'
       - 'tools/**'
 
+# Read to check out, and issues to file the headroom warning below. Nothing here
+# writes to the repository — signing is the only job that does, and it lives in
+# release-content.yml with its own narrower grant.
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -53,6 +60,87 @@ jobs:
 
       - name: Validate content files
         run: python tools/validate_content.py
+
+      # -----------------------------------------------------------------------
+      #  WHY THE MANIFEST IS VERIFIED HERE
+      #  content/index.json is generated and signed by the bot, and until now
+      #  nothing in this workflow looked at it. Editing it by hand — changing a
+      #  version, a hash, a path — passed validation and uuid stability, because
+      #  neither reads it. Only verify_manifest.py would notice, and that ran
+      #  exclusively in the signing job, which is too late: by then the edit is
+      #  already on main.
+      #
+      #  Running it here means a hand-edited manifest fails on the pull request.
+      #  It costs nothing on the ordinary path, because the bot's own manifest
+      #  verifies by construction.
+      # -----------------------------------------------------------------------
+      - name: Verify the signed manifest
+        run: python tools/verify_manifest.py
+
+      # -----------------------------------------------------------------------
+      #  Say something before a limit is reached, not when it is
+      #
+      #  The validator refuses a catalog the app could not load. That is the
+      #  right behaviour and a bad way to find out: the first sign would be a
+      #  red pull request on the day the catalog outgrew the format, with a tip
+      #  already written and nowhere to put it.
+      #
+      #  So the same numbers are reported as headroom, and crossing 80% opens an
+      #  issue. GitHub emails watchers when an issue is opened, which is the
+      #  alert — no Resend key in this repository, nothing to rotate, and the
+      #  warning is a tracked artefact rather than a message in a log nobody
+      #  reads.
+      #
+      #  Deduplicated by label: while one is open, no second is filed. Close it
+      #  after acting and the next run will file a fresh one if the condition
+      #  still holds.
+      #
+      #  Never fails the build. Growth is success; it just needs to be seen.
+      # -----------------------------------------------------------------------
+      - name: Report headroom against the app's limits
+        if: github.event_name == 'push'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          report=$(python tools/validate_content.py --headroom)
+          echo "$report"
+
+          echo "$report" | grep -q '^WARNING:' || exit 0
+
+          existing=$(gh issue list --label "catalog-limit" --state open --json number --jq 'length')
+          if [ "$existing" != "0" ]; then
+            echo "An open catalog-limit issue already exists. Not filing another."
+            exit 0
+          fi
+
+          gh label create catalog-limit --color FBCA04 \
+            --description "The catalog is approaching a limit the app enforces" \
+            2>/dev/null || true
+
+          printf '%s\n' \
+            'The published catalog is within 20% of a limit compiled into the app.' \
+            '' \
+            'Passing that limit does not merely fail CI — a catalog over it is one' \
+            'every phone refuses, falling back to the copy bundled in the APK and' \
+            'quietly receiving no further tips.' \
+            '' \
+            '```' \
+            "$report" \
+            '```' \
+            '' \
+            '**The answer is not a bigger number.** One file per app is deliberate,' \
+            'and the update path makes one request per file — past a few hundred' \
+            'that is slow on a phone regardless of what the limit says. The move is' \
+            'to group several apps into one file, which changes the manifest format' \
+            'and the app'"'"'s loader together.' \
+            '' \
+            'Close this once acted on. A new one is filed only when none is open.' \
+            > /tmp/body.md
+
+          gh issue create --title "Catalog approaching an app limit" \
+            --label catalog-limit --body-file /tmp/body.md
 
       - name: Check that no published uuid was lost
         run: |
