@@ -1,6 +1,6 @@
 {
-  "contentVersion": 12,
-  "generatedAt": "2026-08-17T16:25:02Z",
+  "contentVersion": 13,
+  "generatedAt": "2026-08-17T20:19:29Z",
   "files": [
     {
       "path": "apps/bytedance/com.zhiliaoapp.musically.json",
@@ -15,5 +15,5 @@
       "sha256": "f929d97170a31e794dc2afa60d3ae106a0fdca9b3f932fe2dcb74aa4c0705dd4"
     }
   ],
-  "signature": "ed25519:TyA3TH7xwK+hX/BjV0VLh+EsXuUc0R6FmV8snHT0sVHJFa8iQLyKByNSxPOmoKnLsZMkP0wkxHUu6TcRCBZlBQ=="
+  "signature": "ed25519:/5L4I8q1oJ1bCAI9higLyLNkVeM51V04HxUqTbP/6WTofhFrvYaRQuZ5S/w/27HK8skt0qgZS/AyvfEhtj2TDg=="
 }
