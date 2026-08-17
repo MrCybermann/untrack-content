@@ -76,6 +76,39 @@ MEDIA_SIZE_LIMIT = 2 * 1024 * 1024
 ICON_SIZE_LIMIT = 100 * 1024  # 100 KB
 ICON_EXTENSIONS = {".webp", ".png"}
 
+# -----------------------------------------------------------------------------
+#  What the app will actually accept
+#
+#  MUST MATCH ContentLimits IN THE APP'S DownloadedContent.kt. The app repository
+#  runs check_content_limits.py, which fetches these numbers and fails if the two
+#  sets disagree.
+#
+#  WHY THE PUBLISHER ENFORCES THE CONSUMER'S LIMITS
+#  It did not, and that is a strange gap to leave: this repository could publish,
+#  sign and serve a catalog that every phone then refuses. The signature would be
+#  valid, CI green, the CDN correct — and the app would fall back to its bundled
+#  copy and quietly stop receiving tips.
+#
+#  Failing here instead turns a silent field failure into a red pull request,
+#  which is the difference between finding out now and finding out from a user.
+#
+#  These are ceilings, not targets. See --headroom for how close the catalog is.
+# -----------------------------------------------------------------------------
+MAX_FILE_BYTES = 512 * 1024
+MAX_MANIFEST_BYTES = 256 * 1024
+MAX_FILES = 500
+MAX_TOTAL_BYTES = 8 * 1024 * 1024
+
+# Warn once a limit is this close, so growth is noticed with room to act rather
+# than at the moment publishing breaks.
+HEADROOM_WARN_AT = 0.80
+
+# A catalog path becomes part of a URL. The app's isSafeContentPath rejects
+# traversal and control characters but not URL syntax, so `pixel?x.json` passes
+# there and then silently becomes a query string when appended to the CDN base —
+# the wrong file is requested and the hash fails. Constrain it at the source.
+URL_SAFE_SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+
 # Folder names must be lowercase slugs, e.g. "meta", "samsung", "google".
 FOLDER_SLUG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
@@ -309,6 +342,88 @@ def check_media(problems, path, data):
 #  Main
 # -----------------------------------------------------------------------------
 
+def usage(content_files):
+    """Where the catalog currently sits against each of the app's ceilings.
+
+    Returns name -> (actual, limit, unit). The manifest is measured from the
+    file on disk when there is one; before the first publish there is nothing
+    to measure and it is reported as zero.
+    """
+    sizes = [path.stat().st_size for path in content_files]
+    manifest = CONTENT_DIR / "index.json"
+
+    return {
+        "files": (len(content_files), MAX_FILES, "files"),
+        "largest file": (max(sizes, default=0), MAX_FILE_BYTES, "bytes"),
+        "total size": (sum(sizes), MAX_TOTAL_BYTES, "bytes"),
+        "manifest": (
+            manifest.stat().st_size if manifest.exists() else 0,
+            MAX_MANIFEST_BYTES,
+            "bytes",
+        ),
+    }
+
+
+def check_app_limits(problems, content_files):
+    """Rule 6: nothing the app would refuse to load.
+
+    Publishing something the app rejects is the worst shape of failure this
+    repository can produce — everything here looks correct, the signature
+    verifies, and phones silently stop receiving tips because the catalog
+    exceeds a ceiling compiled into the APK.
+    """
+    for name, (actual, limit, unit) in usage(content_files).items():
+        if actual > limit:
+            problems.append((
+                CONTENT_DIR,
+                f"{name}: {actual} {unit}, over the app's limit of {limit} — "
+                "the app would refuse this catalog and fall back to its "
+                "bundled copy",
+            ))
+
+    # Path grammar. The app checks for traversal; it does not check that a name
+    # survives being put in a URL.
+    for path in content_files:
+        for segment in path.relative_to(CONTENT_DIR).parts:
+            if not URL_SAFE_SEGMENT.match(segment):
+                problems.append((
+                    path,
+                    f"'{segment}' is not safe in a URL. Use letters, digits, "
+                    "dot, underscore or hyphen — a '?' or '#' here silently "
+                    "becomes a query string or fragment when the app builds "
+                    "the download address, and the wrong file is fetched",
+                ))
+
+
+def report_headroom(content_files):
+    """Print how close each limit is, and say so loudly past the warn level.
+
+    Printed rather than failed. The point is to notice growth with room to act,
+    not to block a pull request for being successful — CI turns the WARNING
+    lines below into an issue, which is what reaches an inbox.
+    """
+    print("\nHeadroom against the app's limits:")
+    warned = False
+
+    for name, (actual, limit, unit) in usage(content_files).items():
+        fraction = actual / limit if limit else 0
+        marker = "  "
+        if fraction >= HEADROOM_WARN_AT:
+            marker = "!!"
+            warned = True
+        print(f"  {marker} {name:<14} {actual:>9} / {limit} {unit}  ({fraction:.0%})")
+
+    if warned:
+        print(
+            f"\nWARNING: a limit is over {HEADROOM_WARN_AT:.0%} used.\n"
+            "One file per app is a deliberate choice, so the answer is not a "
+            "bigger number — past a few hundred files the update path issues "
+            "one request per file and becomes slow on a phone. The move is to "
+            "group several apps per file, which changes the manifest format "
+            "and the app's loader together."
+        )
+
+
 def main():
     if not SCHEMA_PATH.exists():
         print(f"Schema not found at {SCHEMA_PATH}")
@@ -344,6 +459,8 @@ def main():
             check_icon(problems, path, data)
             check_media(problems, path, data)
 
+    check_app_limits(problems, content_files)
+
     if problems:
         print(f"✗ {len(problems)} problem(s) found:\n")
         for path, message in problems:
@@ -351,6 +468,10 @@ def main():
         return 1
 
     print(f"✓ {len(content_files)} content file(s) valid.")
+
+    if "--headroom" in sys.argv:
+        report_headroom(content_files)
+
     return 0
 
 
