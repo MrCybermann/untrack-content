@@ -11,7 +11,10 @@
 
  WHAT IT CHECKS
    1. The file matches the JSON Schema (content/schema/suggestion.schema.json),
-      which covers field names, types, and the both-languages requirement.
+      which covers field names and types. Text fields are objects keyed by
+      language and the schema accepts only "en" — the wrapper is kept so adding
+      a language later is a schema change rather than a rewrite of every file.
+      (This said "the both-languages requirement" until Arabic was removed.)
    2. The file is in the right folder:
           content/apps/<publisher>/<package-id>.json
           content/device/<manufacturer>/<skin>.json
@@ -176,7 +179,24 @@ def check_unique_uuids(problems, path, data, uuids_seen_so_far):
 
 
 def check_icon(problems, path, data):
-    """Rule 5a: an optional app icon must be the right type and small enough."""
+    """Rule 5a: a declared app icon must exist, be the right type, and be small.
+
+    WHY EXISTENCE IS CHECKED AND WAS NOT
+    The size check used to read `if icon_path.exists() and ... > LIMIT`, so a
+    declared icon whose file had never been committed passed silently — the
+    guard meant to skip an absent file also skipped the question of whether it
+    should be absent.
+
+    That is not hypothetical. `com.instagram.android.json` declared
+    `meta/com.instagram.android/icon.webp` for months. Nothing had ever
+    committed it, this validator said the file was fine, and the reference was
+    signed into every published manifest. It only surfaced when an external
+    reviewer went looking.
+
+    Guides are checked for existence a few lines below, and always were. The
+    inconsistency is the whole story: two nearly identical rules, one of which
+    happened to be written with a short-circuit and one of which was not.
+    """
     icon = data.get("icon")
     if not isinstance(icon, str):
         return
@@ -185,7 +205,17 @@ def check_icon(problems, path, data):
         problems.append((path, f"icon '{icon}' should end in .webp or .png"))
 
     icon_path = MEDIA_DIR / icon
-    if icon_path.exists() and icon_path.stat().st_size > ICON_SIZE_LIMIT:
+    if not icon_path.exists():
+        problems.append((
+            path,
+            f"icon '{icon}' is declared but not committed under media/ — "
+            f"expected {icon_path.relative_to(MEDIA_DIR.parent)}. A declaration "
+            "pointing at a missing file becomes a broken reference inside signed "
+            "content, and nothing downstream will catch it.",
+        ))
+        return
+
+    if icon_path.stat().st_size > ICON_SIZE_LIMIT:
         size = icon_path.stat().st_size
         problems.append((path, f"icon '{icon}' is {size} bytes, over the {ICON_SIZE_LIMIT}-byte cap"))
 
