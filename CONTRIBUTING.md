@@ -144,6 +144,14 @@ Optional but great. Rules:
    python3 tools/validate_content.py
    ```
 
+   **Python 3.9 or newer.** That is the floor because it is what macOS shipped
+   for years, and the tools are written to stay inside it — CI runs a newer
+   version, so anything relying on newer syntax would pass there and fail for
+   you, which is the wrong way round for a check whose whole job is to run
+   before you push. If one of these scripts fails with a `TypeError` about
+   annotations or an unfamiliar syntax error, that is a bug here, not a reason
+   to upgrade. Please report it.
+
 2. Do **not** edit `content/index.json`. It is generated and signed
    automatically on merge, and editing it by hand only guarantees a conflict.
 3. Open the pull request and fill in the template. CI validates the schema,

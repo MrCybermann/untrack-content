@@ -2,7 +2,9 @@
 
 Four steps. The same four whether you edited an existing tip or added a new app.
 
-Run everything from the repository root.
+Run everything from the repository root. **Python 3.9 or newer** — if a script
+fails with a `TypeError` about annotations, that is a bug in the script rather
+than a reason to upgrade, and worth reporting.
 
 ---
 
