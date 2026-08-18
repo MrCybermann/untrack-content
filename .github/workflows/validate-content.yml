@@ -86,11 +86,26 @@ jobs:
       # -----------------------------------------------------------------------
       - name: The manifest was not hand-edited
         run: |
+          # WHY NOT HEAD^ ON A PUSH
+          # A push can carry several commits. HEAD^ inspects only the last one,
+          # so a two-commit push that edits index.json in the first and anything
+          # else in the second passes — HEAD^ *is* the offending commit, so the
+          # diff against it shows nothing wrong.
+          #
+          # github.event.before is the branch tip before the whole push, which is
+          # the only base that sees everything the push introduced.
+          #
+          # It is all-zeros when a branch is created. Nothing here creates main,
+          # but falling back to HEAD^ keeps that case working rather than
+          # comparing against a commit that does not exist.
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             RANGE="origin/${{ github.base_ref }}...HEAD"
-          else
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
             RANGE="HEAD^..HEAD"
+          else
+            RANGE="${{ github.event.before }}..${{ github.sha }}"
           fi
+          echo "Inspecting $RANGE"
 
           if git diff --name-only "$RANGE" | grep -qx 'content/index.json'; then
             echo "::error::content/index.json is generated and signed by CI, and this change edits it."
@@ -173,10 +188,16 @@ jobs:
 
       - name: Check that no published uuid was lost
         run: |
+          # Same reasoning as the manifest guard above: HEAD^ sees only the last
+          # commit of a push, so a uuid removed in the first commit of a
+          # two-commit push is absent from both sides of the comparison and
+          # passes. github.event.before is the tip before the whole push.
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE="origin/${{ github.base_ref }}"
-          else
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
             BASE="HEAD^"
+          else
+            BASE="${{ github.event.before }}"
           fi
           echo "Comparing against $BASE"
           python tools/check_uuid_stability.py --base "$BASE"

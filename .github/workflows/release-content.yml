@@ -113,6 +113,27 @@ jobs:
             # was actually published to phones. Anything lost since then is a
             # uuid a phone has already recorded progress against, which is
             # exactly the set worth protecting.
+            # WHY THE GUARD IS REPEATED HERE
+            # validate-content.yml rejects a change that edits index.json, but
+            # the two workflows are independent and run at the same time. A red
+            # validation job does not stop this one — so on a direct push, a
+            # hand-edited manifest can become the "last published" commit this
+            # job then trusts as its uuid base, before the guard has finished
+            # reporting.
+            #
+            # Branch protection requiring the validation check would close this
+            # more thoroughly, because it would stop the commit landing at all.
+            # This is the version that works without depending on a repository
+            # setting nobody can see from the code.
+            if [ "${{ github.event_name }}" = "push" ] \
+               && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] \
+               && git diff --name-only "${{ github.event.before }}..${{ github.sha }}" \
+                    | grep -qx 'content/index.json'; then
+              echo "::error::This push edits content/index.json, which is generated. Refusing to sign."
+              echo "Revert it and let this job regenerate it: git checkout origin/main -- content/index.json"
+              exit 1
+            fi
+
             base=$(git log -1 --format=%H -- content/index.json || true)
             if [ -n "$base" ]; then
               echo "--- Checking uuids against the last published catalog ($base)"
