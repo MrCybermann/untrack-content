@@ -127,6 +127,12 @@ HEADROOM_WARN_AT = 0.80
 # the wrong file is requested and the hash fails. Constrain it at the source.
 URL_SAFE_SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
+# Matches isSafeContentPath in the app's DownloadedContent.kt, which refuses any
+# path longer than this. Applies to media paths too: MediaStore's isSafeMediaPath
+# uses the same bound, and a guide whose path the app rejects is a guide that
+# never loads.
+MAX_PATH_LENGTH = 200
+
 # Folder names must be lowercase slugs, e.g. "meta", "samsung", "google".
 FOLDER_SLUG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 
@@ -324,6 +330,40 @@ def webp_canvas(path: Path) -> tuple[int, int] | None:
     return None
 
 
+def check_os_range(problems, path, data):
+    """Rule 5c: a device entry's osMin must not be above its osMax.
+
+    WHY THIS IS NOT CAUGHT BY THE SCHEMA
+    Both are optional integers and each is individually valid. Only the
+    *relationship* is wrong, which JSON Schema can express but awkwardly, and
+    which reads far more clearly here.
+
+    WHY IT MATTERS
+    SuggestionMatcher refuses a device entry when the phone's API level is below
+    osMin or above osMax. With osMin above osMax there is no API level that
+    satisfies both, so every suggestion in that entry is silently unreachable on
+    every phone ever made. Nothing else notices: the file is valid, it signs, it
+    publishes, and it shows to nobody.
+
+    A typo produces this, not malice — which is why it is worth a rule rather
+    than a note.
+    """
+    for suggestion in data.get("suggestions", []):
+        if not isinstance(suggestion, dict):
+            continue
+
+        os_min = suggestion.get("osMin")
+        os_max = suggestion.get("osMax")
+
+        if isinstance(os_min, int) and isinstance(os_max, int) and os_min > os_max:
+            problems.append((
+                path,
+                f"suggestion '{suggestion.get('id', '?')}' has osMin {os_min} above "
+                f"osMax {os_max}. No phone can satisfy both, so this suggestion "
+                "would publish and reach nobody.",
+            ))
+
+
 def check_media(problems, path, data):
     """Rule 5b: a declared visual guide must exist, match its hash, and move.
 
@@ -356,6 +396,17 @@ def check_media(problems, path, data):
 
         src = media["src"]
         media_path = MEDIA_DIR / src
+
+        # Same bound as content paths, and the same reason: MediaStore's
+        # isSafeMediaPath refuses anything longer, so an over-long guide path is
+        # published and never fetched.
+        if len(src) > MAX_PATH_LENGTH:
+            problems.append((
+                path,
+                f"media path '{src[:60]}…' is {len(src)} characters, over the "
+                f"app's {MAX_PATH_LENGTH}-character limit — the app refuses it, "
+                "so the guide would never load.",
+            ))
 
         if not media_path.is_file():
             problems.append(
@@ -457,6 +508,16 @@ def check_app_limits(problems, content_files):
     # Path grammar. The app checks for traversal; it does not check that a name
     # survives being put in a URL.
     for path in content_files:
+        relative = path.relative_to(CONTENT_DIR).as_posix()
+
+        if len(relative) > MAX_PATH_LENGTH:
+            problems.append((
+                path,
+                f"the path is {len(relative)} characters, over the app's "
+                f"{MAX_PATH_LENGTH}-character limit. The app refuses it outright, "
+                "so this file would be published and never read.",
+            ))
+
         for segment in path.relative_to(CONTENT_DIR).parts:
             if not URL_SAFE_SEGMENT.match(segment):
                 problems.append((
@@ -530,6 +591,7 @@ def main():
             check_unique_suggestion_ids(problems, path, data)
             check_unique_uuids(problems, path, data, uuids_seen)
             check_icon(problems, path, data)
+            check_os_range(problems, path, data)
             check_media(problems, path, data)
 
     check_app_limits(problems, content_files)
