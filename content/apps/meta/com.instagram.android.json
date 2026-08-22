@@ -7,7 +7,7 @@
   "suggestions": [
     {
       "uuid": "9c929e75-bc86-4edf-afcd-23fed94057a2",
-      "id": "ig-private-account",
+      "id": "instagram-private-account",
       "impact": "high",
       "category": "account-visibility",
       "audience": [
@@ -36,14 +36,14 @@
       },
       "media": {
         "type": "webp",
-        "src": "com.instagram.android/ig-private-account.webp",
+        "src": "com.instagram.android/instagram-private-account.webp",
         "sha256": "a6a73f4ac90b084e0b3e757c97ac5e71fd0763d4ada60e43d75e5b7be3f93411"
       },
       "reference": "https://help.instagram.com/1717693135113805/"
     },
     {
       "uuid": "3e5cdd5a-eabb-40f8-ab7f-2f619083b58a",
-      "id": "ig-activity-status",
+      "id": "instagram-activity-status",
       "impact": "low",
       "category": "activity-visibility",
       "audience": [
@@ -72,14 +72,14 @@
       },
       "media": {
         "type": "webp",
-        "src": "com.instagram.android/ig-activity-status.webp",
+        "src": "com.instagram.android/instagram-activity-status.webp",
         "sha256": "394fa25388234676bc57d15408b61405731b4de2a7f0f85874d4da380ca10e37"
       },
       "reference": "https://help.instagram.com/1164377657035425/"
     },
     {
       "uuid": "0c75a72a-e774-4dc0-8d35-121ca26b4073",
-      "id": "ig-supervision",
+      "id": "instagram-supervision",
       "impact": "high",
       "category": "parental",
       "audience": [
@@ -108,14 +108,14 @@
       },
       "media": {
         "type": "webp",
-        "src": "com.instagram.android/ig-supervision.webp",
+        "src": "com.instagram.android/instagram-supervision.webp",
         "sha256": "096decbea9ae3c797948319e714ac12bf5fdc27998b4f6925306e7a2fbdfbaf7"
       },
       "reference": "https://www.meta.com/en-gb/help/supervision/1194312565575476/?srsltid=AfmBOoppfHw-88jv4316IM8P_rQY5e0vG3iYpTtf-SYlG7vWGq4sYEeg"
     },
     {
       "uuid": "90499505-708f-44a6-9f68-996d50a0e1db",
-      "id": "ig-read-receipts",
+      "id": "instagram-read-receipts",
       "impact": "low",
       "category": "activity-visibility",
       "audience": [
@@ -145,10 +145,88 @@
       },
       "media": {
         "type": "webp",
-        "src": "com.instagram.android/ig-read-receipts.webp",
+        "src": "com.instagram.android/instagram-read-receipts.webp",
         "sha256": "a87e18607bd1117db2f4049ddd9e5a05feccdbb01e7c02acf1601e606c4b101b"
       },
       "reference": "https://help.instagram.com/1586876252167004"
+    },
+    {
+      "uuid": "87468bb2-00ca-4734-a05c-99d46bf94aa5",
+      "id": "instagram-remove-access-to-contacts",
+      "impact": "medium",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Remove access to contacts"
+      },
+      "why": {
+        "en": "Instagram uses the contacts as a way to suggest new people on the app. However, this also gives up your network information to Meta, which can help in identifying you."
+      },
+      "tradeoffs": {
+        "en": "Automatically finding the profiles of the people in your contacts."
+      },
+      "steps": {
+        "en": [
+          "Go to your profile",
+          "Tap the 3 lines on the top right",
+          "Navigate to \"Your app and media\"",
+          "Tap \"Device permissions\"",
+          "Tap \"Contacts\"",
+          "Tap \"Update device settings\"",
+          "Tap \"Open Device Settings\"",
+          "Tap \"Don't allow\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/instagram-remove-access-to-contacts.webp",
+        "sha256": "47c0c8a2885d44bbafa36127de6512753ba0f6e2098b4caf573183250ccb418b"
+      },
+      "reference": "https://help.instagram.com/1535234260383659/?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "640be077-3c9e-4283-86ad-84f70a20f2e9",
+      "id": "instagram-remove-access-to-location-service",
+      "impact": "high",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Remove access to location service"
+      },
+      "why": {
+        "en": "Giving Instagram location access can provide another strong signal about where you are, where you spend time, and your movement patterns. Even if you never manually tag a location, precise or background location can potentially make things like ad targeting, local recommendations, and behavioral profiling more accurate."
+      },
+      "tradeoffs": {
+        "en": "Less accurate nearby-place suggestions, local content, and location-based recommendations. You can still manually search for and tag locations in posts or Stories."
+      },
+      "steps": {
+        "en": [
+          "Go to your profile",
+          "Tap the 3 lines at the top right",
+          "Navigate to \"Your app and media\"",
+          "Tap \"Device permissions\"",
+          "Tap \"Location Service\"",
+          "Tap \"Update device settings\"",
+          "Tap \"Open Device Settings\"",
+          "Tap \"Don't allow\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/instagram-remove-access-to-location-service.webp",
+        "sha256": "b3cddef33c260281bb9dc5ba8365aadef76dcb0233a92bff50a7cc11101fb9d0"
+      },
+      "reference": "https://help.instagram.com/1535234260383659/?cms_platform=android-app&helpref=platform_switcher"
     }
   ]
 }
