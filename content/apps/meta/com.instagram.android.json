@@ -112,6 +112,43 @@
         "sha256": "096decbea9ae3c797948319e714ac12bf5fdc27998b4f6925306e7a2fbdfbaf7"
       },
       "reference": "https://www.meta.com/en-gb/help/supervision/1194312565575476/?srsltid=AfmBOoppfHw-88jv4316IM8P_rQY5e0vG3iYpTtf-SYlG7vWGq4sYEeg"
+    },
+    {
+      "uuid": "90499505-708f-44a6-9f68-996d50a0e1db",
+      "id": "ig-read-receipts",
+      "impact": "low",
+      "category": "activity-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Turn off read receipts"
+      },
+      "why": {
+        "en": "Read receipts tell the other person exactly when you opened their message. With them off, they can still see the message was delivered, but not whether you have read it."
+      },
+      "tradeoffs": {
+        "en": "You stop seeing read receipts for messages you send, too. It applies both ways."
+      },
+      "steps": {
+        "en": [
+          "Open Instagram, then your profile",
+          "Tap the menu (three lines) at the top right",
+          "Tap \"How others can interact with you\"",
+          "Tap \"Messages and story replies\"",
+          "Tap \"Show read receipts\"",
+          "Turn \"Read receipts\" off"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/ig-read-receipts.webp",
+        "sha256": "a87e18607bd1117db2f4049ddd9e5a05feccdbb01e7c02acf1601e606c4b101b"
+      },
+      "reference": "https://help.instagram.com/1586876252167004"
     }
   ]
 }
