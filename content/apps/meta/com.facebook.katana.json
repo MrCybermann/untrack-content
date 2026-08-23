@@ -43,6 +43,353 @@
         "sha256": "2e4fa30fbb1e2c9fe5351a7363d0dc0dd0fa35d6418e267b6a5dde53a5fedd3a"
       },
       "reference": "https://www.facebook.com/help/276177272409629"
+    },
+    {
+      "uuid": "c53ed630-54e9-4011-bc40-648de2999600",
+      "id": "facebook-change-who-can-see-your-friends-list",
+      "impact": "high",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Change who can see your friends list"
+      },
+      "why": {
+        "en": "Your friends list can reveal your family, workplace, social circles, location, and other relationships. Hiding it makes social engineering, impersonation, targeted scams, and mapping your real-world network harder."
+      },
+      "tradeoffs": {
+        "en": "Other people can’t easily browse your connections or discover mutual acquaintances through your full friends list, which can make networking and finding people slightly less convenient."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap \"How people find and contact you\"",
+          "Tap on \"Who can see your friends list?\"",
+          "set it to at least \"Friends\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-change-who-can-see-your-friends-list.webp",
+        "sha256": "0a17801aaf7f0916465af75774218e180126382c8cd4fc97fd60247eeeddc100"
+      },
+      "reference": "https://www.facebook.com/help/115450405225661?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "131b5dd4-d47e-4f05-a20b-d2659ae4a177",
+      "id": "facebook-block-account-visibility-in-search-engines",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Block account visibility in search engines"
+      },
+      "why": {
+        "en": "Turning this off reduces how easily your Facebook profile appears in Google, Bing, and other search engines. That lowers your public discoverability and makes it harder for strangers, recruiters, scammers, or data collectors to connect your Facebook identity with your broader online footprint."
+      },
+      "tradeoffs": {
+        "en": "People searching for you outside Facebook may have a harder time finding your profile, which can reduce discoverability for networking, professional contacts, or old acquaintances."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap \"How people find and contact you\"",
+          "Turn off \"Do you want search engines outside of Facebook to link to your profile?\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-block-account-visibility-in-search-engines.webp",
+        "sha256": "dbcf47b7b6b00826b367673de04bea498a883a7fa857b71fe520723973571a12"
+      },
+      "reference": "https://www.facebook.com/help/392235220834308"
+    },
+    {
+      "uuid": "7056ee19-0e5a-435b-944e-f886e13680e4",
+      "id": "facebook-set-who-can-see-your-future-posts-to-friends",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set who can see your future posts to friends"
+      },
+      "why": {
+        "en": "Setting future posts to Friends prevents new posts from being automatically visible to anyone on Facebook or potentially beyond it. This reduces unwanted exposure, scraping, profiling, and the chance that personal updates, photos, or location clues are seen by strangers."
+      },
+      "tradeoffs": {
+        "en": "Your posts will have less public reach and may be harder for people outside your friend network to discover or share. This can matter if you use Facebook for public networking, promotion, or community outreach."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap Posts",
+          "Tap \"Who can see your future posts?\"",
+          "Select \"Friends\"",
+          "Save"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-set-who-can-see-your-future-posts-to-friends.webp",
+        "sha256": "30ffb1f56f9cc132d255f0dfc0077243465c796952f4149aac69aef27fedb2f4"
+      },
+      "reference": "https://www.facebook.com/help/120939471321735?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "21c643c7-6a07-450b-b2db-3c3ad49a0eb1",
+      "id": "facebook-limit-your-past-posts",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Limit your past posts"
+      },
+      "why": {
+        "en": "Older posts can contain years of personal information, photos, locations, relationships, and opinions that you may no longer want publicly accessible. Limiting them reduces your historical exposure to strangers, scraping, profiling, and unwanted digging through your past."
+      },
+      "tradeoffs": {
+        "en": "Older posts that were intentionally public will lose that wider visibility. This can reduce reach for old professional, community, or public-facing content, and you may need to manually make specific posts public again."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap Posts",
+          "Tap View on \"Limit who can see past posts\"",
+          "Tap \"LIMIT PAST POSTS\"",
+          "Tap again on \"Limit past posts\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-limit-your-past-posts.webp",
+        "sha256": "a37eaa42191c57821ecf1934cd3bcf1b7fd44f13c8b274b1a9fd53244f0f0d84"
+      },
+      "reference": "https://www.facebook.com/help/236898969688346?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "fc6b064f-2576-429c-b9bb-753a607f563a",
+      "id": "facebook-stop-showing-when-youre-active",
+      "impact": "low",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Stop showing you're active"
+      },
+      "why": {
+        "en": "Turning it off prevents others from seeing when you’re online or recently active. This reduces real-time visibility into your habits, availability, and usage patterns, and can help avoid unwanted messages or people tracking when you’re active."
+      },
+      "tradeoffs": {
+        "en": "You generally won’t be able to see other people’s active or recently active status either, making messaging feel a little less immediate."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap \"Active status\"",
+          "Turn off \"Show when you're active\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-stop-showing-when-youre-active.webp",
+        "sha256": "5118166422066e0b0dd2feef6ce83adc683c50c1db78b943a109aa47d74edc35"
+      },
+      "reference": "https://www.facebook.com/help/215888465102253?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "b5f54a8f-0617-477f-8379-83757febab96",
+      "id": "facebook-disable-contacts-permission",
+      "impact": "medium",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable access to contacts"
+      },
+      "why": {
+        "en": "Blocking contact access prevents Facebook from reading or uploading your address book to help match people you know, build connection suggestions, or strengthen its picture of your real-world social network."
+      },
+      "tradeoffs": {
+        "en": "Friend suggestions may be less accurate, and Facebook will be less effective at automatically finding people you already know from your phone contacts."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Your activity and permissions\"",
+          "Tap \"Device Permissions\"",
+          "Tap See info for Contacts",
+          "Tap on Update settings and Open device settings",
+          "Tap on Permissions",
+          "Tap on Contacts and set to Don't allow"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-disable-contacts-permission.webp",
+        "sha256": "4df77000be828baac5cfd5b7bef03da88ffdcc13b4ee538cfc66dbb62cb90bc3"
+      },
+      "reference": "https://www.facebook.com/help/738954227808276?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "82a08e0d-ac3e-4363-b333-ee7e1f057667",
+      "id": "facebook-limit-location-service",
+      "impact": "high",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Limit access to your location"
+      },
+      "why": {
+        "en": "Setting location access to Ask Every Time prevents Facebook from having routine access to your location and gives you control each time it wants it. For stronger privacy, Don’t Allow is better unless you actively use a feature that genuinely needs your location."
+      },
+      "tradeoffs": {
+        "en": "Nearby recommendations, local content, check-ins, and other location-based features may be less convenient or less accurate."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Your activity and permissions\"",
+          "Tap \"Device Permissions\"",
+          "Tap See info for Location",
+          "Tap on Update settings and Open device settings",
+          "Tap on Permissions",
+          "Tap on Location and set to Ask everytime"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-limit-location-service.webp",
+        "sha256": "c7f4ceee184718141b770f205355c04b08b95d02be80287c2cf4e3cc8ff010f4"
+      },
+      "reference": "https://www.facebook.com/help/738954227808276?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "9c738885-67b6-4224-bb30-db72a9afa6c9",
+      "id": "facebook-limit-access-to-photos-and-videos",
+      "impact": "high",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Limit access to photos and videos"
+      },
+      "why": {
+        "en": "Limiting access means Facebook can only access the photos and videos you explicitly choose, rather than your entire library. This reduces unnecessary exposure of private images, screenshots, documents, metadata, and media that could otherwise be available to Facebook features or processing."
+      },
+      "tradeoffs": {
+        "en": "You’ll need to grant access to additional photos or videos when you want to upload them, and browsing your full library from inside Facebook becomes less seamless."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Your activity and permissions\"",
+          "Tap \"Device Permissions\"",
+          "Tap See info for Photos and Videos",
+          "Tap on Update settings and Open device settings",
+          "Tap on Permissions",
+          "Tap on Photos and videos and set to \"Allow limited access\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-limit-access-to-photos-and-videos.webp",
+        "sha256": "796dd1cd1002680bf51407f159a4ed50fc78a07bbb460b4ca16b234cc2da71c2"
+      },
+      "reference": "https://www.facebook.com/help/738954227808276?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "da3e5619-ed7e-4716-b92e-086094d13e9b",
+      "id": "facebook-enable-parental-supervision",
+      "impact": "high",
+      "category": "parental",
+      "audience": [
+        "parental"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Enable Parental supervision"
+      },
+      "why": {
+        "en": "Family Center gives parents visibility and control over parts of a teen’s Facebook experience, including safety and privacy settings, time spent, and certain interactions. It helps parents maintain age-appropriate protections and makes it harder for important safeguards to be quietly relaxed. Meta now centralizes supervision across Facebook, Messenger, Instagram, and Meta Horizon in Family Center."
+      },
+      "tradeoffs": {
+        "en": "The teen has less independence over some privacy, safety, and usage settings. Parental visibility can also feel intrusive, so it works best when the teen understands what is being supervised and why."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Tap \"Family Center\" and tap continue",
+          "Search for the child account and select it",
+          "Tap on \"Send invite\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-enable-parental-supervision.webp",
+        "sha256": "cd58ca37a562428d211bd9ecbb902671999509b2dd5dbebac0946585756b1dd1"
+      },
+      "reference": "https://about.fb.com/news/2026/05/new-supervision-tools-parents-insights-teens-algorithm/"
     }
   ]
 }
