@@ -193,7 +193,7 @@
       "uuid": "640be077-3c9e-4283-86ad-84f70a20f2e9",
       "id": "instagram-remove-access-to-location-service",
       "impact": "high",
-      "category": "permissions",
+      "category": "location",
       "audience": [
         "all"
       ],

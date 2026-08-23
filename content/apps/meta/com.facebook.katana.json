@@ -123,7 +123,7 @@
       "uuid": "7056ee19-0e5a-435b-944e-f886e13680e4",
       "id": "facebook-set-who-can-see-your-future-posts-to-friends",
       "impact": "high",
-      "category": "account-visibility",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -162,7 +162,7 @@
       "uuid": "21c643c7-6a07-450b-b2db-3c3ad49a0eb1",
       "id": "facebook-limit-your-past-posts",
       "impact": "high",
-      "category": "account-visibility",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -201,7 +201,7 @@
       "uuid": "fc6b064f-2576-429c-b9bb-753a607f563a",
       "id": "facebook-stop-showing-when-youre-active",
       "impact": "low",
-      "category": "account-visibility",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -278,7 +278,7 @@
       "uuid": "82a08e0d-ac3e-4363-b333-ee7e1f057667",
       "id": "facebook-limit-location-service",
       "impact": "high",
-      "category": "permissions",
+      "category": "location",
       "audience": [
         "all"
       ],

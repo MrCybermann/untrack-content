@@ -82,7 +82,7 @@
       "uuid": "7c074523-6032-4fca-9e28-00f3f7680027",
       "id": "tiktok-disable-activity-status",
       "impact": "medium",
-      "category": "account-visibility",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -156,7 +156,7 @@
       "uuid": "0e1576c5-c6ca-413f-873f-1fb0d592f411",
       "id": "tiktok-disable-sync-contacts",
       "impact": "medium",
-      "category": "account-visibility",
+      "category": "data-sharing",
       "audience": [
         "all"
       ],
@@ -194,7 +194,7 @@
       "uuid": "d3b8cebc-92ec-455c-a575-2294f6ea0de6",
       "id": "tiktok-set-following-list-to-only-you",
       "impact": "high",
-      "category": "data-sharing",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -231,7 +231,7 @@
       "uuid": "20371db0-daec-4812-b925-d4aa1080339f",
       "id": "tiktok-set-liked-videos-to-only-you",
       "impact": "low",
-      "category": "data-sharing",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],
@@ -269,7 +269,7 @@
       "uuid": "54b8c76b-3db4-4467-89ce-46fc8ada74d8",
       "id": "tiktok-disable-viewer-history",
       "impact": "low",
-      "category": "account-visibility",
+      "category": "activity-visibility",
       "audience": [
         "all"
       ],

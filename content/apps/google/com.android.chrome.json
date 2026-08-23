@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "package": "com.android.chrome",
+  "appName": "Google Chrome",
+  "publisher": "Google",
+  "lastUpdated": "2026-08-23",
+  "suggestions": [
+    {
+      "uuid": "37cebb12-9b88-486f-afab-ae2d1e6a5414",
+      "id": "google-chrome-disable-chrome-telemetry",
+      "impact": "high",
+      "category": "telemetry",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable Chrome telemetry"
+      },
+      "why": {
+        "en": "Turning these off reduces diagnostic, usage, and interaction data sent to Google. It limits how much information about how you use Chrome—and what you type into the address bar for suggestions—is shared for analytics, product improvement, and prediction."
+      },
+      "tradeoffs": {
+        "en": "Chrome may provide slightly less accurate search/autocomplete suggestions, and Google receives less diagnostic data that could help identify bugs, crashes, or improve Chrome’s performance."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 dot line at the top right",
+          "Tap on Settings",
+          "Tap Google Services",
+          "Turn off \"Help Improve Chrome's features and performance",
+          "Turn off \"Improve Search Suggestions\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.android.chrome/google-chrome-disable-chrome-telemetry.webp",
+        "sha256": "c363b405f1af6ac77f0506d720f0fab7112d66ca5d4eb09db7e265866c87e6d5"
+      },
+      "reference": "https://support.google.com/chrome/answer/96817?hl=en&co=GENIE.Platform%3DAndroid&oco=1"
+    },
+    {
+      "uuid": "78a3015c-81ec-4109-97a0-15e0d76fb43c",
+      "id": "google-change-search-engine",
+      "impact": "medium",
+      "category": "activity-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Change your search engine to Brave or DuckDuckGo"
+      },
+      "why": {
+        "en": "Using a more privacy-focused search engine reduces how much your search history can be tied to a Google profile for personalization, profiling, or advertising. It also helps separate what you search for from the company that operates your browser."
+      },
+      "tradeoffs": {
+        "en": "Google may still provide better results for some niche, local, shopping, or highly personalized searches. You may also lose some tight integrations with Google services and personalized search features."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 dot line at the top right",
+          "Tap on Settings",
+          "Tap Search engine",
+          "Select either DuckDuckGo or Brave"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.android.chrome/google-change-search-engine.webp",
+        "sha256": "1e0151c71fb97f7d33170ea01009b85a9906ec3032fa952fb2f638a9ec804e3c"
+      },
+      "reference": "https://support.google.com/chrome/answer/95426?hl=en&co=GENIE.Platform%3DAndroid&oco=1"
+    },
+    {
+      "uuid": "616938bc-390b-4cb8-8568-d4762d2efbed",
+      "id": "google-enable-send-a-do-not-track-request",
+      "impact": "medium",
+      "category": "activity-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Enable sending a \"Do not track\" request"
+      },
+      "why": {
+        "en": "It tells websites that you prefer not to be tracked across sites for advertising or profiling. It’s a useful privacy signal, but it is not a technical block—websites can choose to ignore it, so it should be combined with stronger tracker and cookie protections."
+      },
+      "tradeoffs": {
+        "en": "Usually nothing noticeable. Some sites may reduce personalization, but because many websites ignore Do Not Track, the practical trade-off is generally very small."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 dot line at the top right",
+          "Tap on Settings",
+          "Tap on Privacy and security",
+          "Tap on Send a \"Do not track\" request",
+          "Turn it on"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.android.chrome/google-enable-send-a-do-not-track-request.webp",
+        "sha256": "1e0151c71fb97f7d33170ea01009b85a9906ec3032fa952fb2f638a9ec804e3c"
+      },
+      "reference": "https://support.google.com/chrome/answer/2790761?hl=en&co=GENIE.Platform%3DDesktop"
+    },
+    {
+      "uuid": "f505cfac-42f1-42f9-ae45-3f3d3597845f",
+      "id": "google-set-safe-browsing-to-standard-protection",
+      "impact": "high",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set safe browsing to standard protection"
+      },
+      "why": {
+        "en": "Enhanced Protection sends more browsing data to Google in real time, including URLs you visit, samples of page content, downloads, extension activity, and system information. Standard Protection shares less data while still checking for known phishing, malware, and dangerous sites"
+      },
+      "tradeoffs": {
+        "en": "You lose some of Chrome’s strongest real-time protection against newly discovered phishing, malicious downloads, and suspicious extensions. Standard Protection is more private, but may detect emerging threats later than Enhanced Protection."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 dot line at the top right",
+          "Tap on Settings",
+          "Tap on Privacy and security",
+          "Tap on Safe Browsing",
+          "Set to \"Standard Protection\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.android.chrome/google-set-safe-browsing-to-standard-protection.webp",
+        "sha256": "9072e18e2fcad73cea82575057817ea1d09a4e7e1acace7c3f742c5803689d5b"
+      },
+      "reference": "https://support.google.com/chrome/answer/9890866?hl=en&co=GENIE.Platform%3DAndroid"
+    },
+    {
+      "uuid": "3c631464-1662-4eb8-8284-e359a6829c48",
+      "id": "google-enable-secure-connections-only",
+      "impact": "high",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Enable secure connections only"
+      },
+      "why": {
+        "en": "HTTPS encrypts the data exchanged between you and websites, reducing what Wi-Fi operators, ISPs, or other intermediaries can see or tamper with. It protects both privacy and security when browsing."
+      },
+      "tradeoffs": {
+        "en": "Very little. Some old HTTP-only websites may show a warning or require an extra step before Chrome lets you visit them."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 dot line at the top right",
+          "Tap on Settings",
+          "Tap on Privacy and security",
+          "Tap on \"Always use secure connections\"",
+          "Turn on \"Always use secure connections\"",
+          "Keep it set at \"Warns you for insecure public sites\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.android.chrome/google-enable-secure-connections-only.webp",
+        "sha256": "8ab9b2975f15072ab4dc74354ef9c594176f16fc3b0de3127a44bfdc05974ffd"
+      },
+      "reference": "https://support.google.com/chrome/answer/10468685?hl=eN&co=GENIE.Platform%3DAndroid"
+    }
+  ]
+}
