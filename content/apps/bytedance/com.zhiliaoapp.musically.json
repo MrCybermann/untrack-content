@@ -17,7 +17,7 @@
         "*"
       ],
       "title": {
-        "en": "Stop TikTok using what you do elsewhere to target ads"
+        "en": "Disable personalized ads"
       },
       "why": {
         "en": "Other apps and websites send TikTok information about what you do on them, even when you are not using TikTok. Turning this off means that information is no longer used to choose which ads you see. You will see the same number of ads, and TikTok still uses what you do inside the app itself."
@@ -30,11 +30,317 @@
           "Open TikTok and go to your profile",
           "Tap the menu (three lines) in the top corner",
           "Tap Settings and privacy",
-          "Tap Ads personalization",
-          "Turn off Use of off-TikTok activity for ad targeting"
+          "Tap Ads",
+          "Turn off Personalized ads"
         ]
       },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-off-app-activity-ads.webp",
+        "sha256": "f5f5e9883c788abccc96de39c9b4bb0bf7f7ffba2f7d65b9a497e0282502f30b"
+      },
       "reference": "https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data"
+    },
+    {
+      "uuid": "c153266b-a0b7-456d-b322-18d00261aeae",
+      "id": "tiktok-set-account-to-private",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Change your account to private"
+      },
+      "why": {
+        "en": "A private account limits who can follow you and see your videos, likes, and follower/following lists. You approve followers yourself, reducing exposure to strangers, scraping, unwanted attention, and profiling by other users. It does not stop TikTok itself from processing your activity."
+      },
+      "tradeoffs": {
+        "en": "Your videos have much less public reach and discoverability. New followers need approval, and some sharing, Duet, Stitch, or interaction features may be more limited."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Turn on \"Private Account\"",
+          "Select \"Turn off and continue\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-set-account-to-private.webp",
+        "sha256": "f5a215fe5fbf9d0fbc0f2325ec2a43e42379b9d82c48d6eb5237566fa6ee6362"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7543538137926998533"
+    },
+    {
+      "uuid": "7c074523-6032-4fca-9e28-00f3f7680027",
+      "id": "tiktok-disable-activity-status",
+      "impact": "medium",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Turn off/limit activity status"
+      },
+      "why": {
+        "en": "Limiting Activity Status to Friends or None prevents more people from seeing when you’re online or recently active. That reduces real-time behavioral visibility and makes it harder for others to infer your routines, availability, or when you’re using TikTok."
+      },
+      "tradeoffs": {
+        "en": "You’ll have less visibility into other people’s activity status too. Setting it to None can make messaging feel slightly less immediate because you can’t tell when someone is online."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Tap \"Activity status\"",
+          "Select either \"Friends\" OR \"No one\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-disable-activity-status.webp",
+        "sha256": "2261c496378bc3378ba0fd419b638288563003c9f4c751d782f6c640169ce562"
+      },
+      "reference": "tiktok.com/support/faq_detail?id=7636676986101963284"
+    },
+    {
+      "uuid": "b2ba0e03-7967-4706-807c-3322354df398",
+      "id": "tiktok-disable-suggest-your-account-to-others",
+      "impact": "low",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable suggesting your account to others"
+      },
+      "why": {
+        "en": "Disabling these suggestions reduces how easily TikTok can connect your account to people you know offline. It helps keep your TikTok identity more separate from your phone contacts, Facebook network, workplace, family, or other real-world social circles."
+      },
+      "tradeoffs": {
+        "en": "Friends and acquaintances may have a harder time finding your account automatically, so you may need to share your username or profile directly."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Tap \"Suggest your account to others\"",
+          "Turn off both \"Contacts\" AND \"Facebook friends\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-disable-suggest-your-account-to-others.webp",
+        "sha256": "43cbbeeb3c3cc1b1b3854c645d27774c2fdecc9db6874740e2ef19aa6062ea03"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7636670084747991572&category=web_account"
+    },
+    {
+      "uuid": "0e1576c5-c6ca-413f-873f-1fb0d592f411",
+      "id": "tiktok-disable-sync-contacts",
+      "impact": "medium",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable sync contacts and facebook friends"
+      },
+      "why": {
+        "en": "Disabling sync prevents TikTok from continuously matching your address book or Facebook network with TikTok accounts. This reduces how much of your real-world social graph is shared with TikTok and helps keep your account less connected to people you know offline."
+      },
+      "tradeoffs": {
+        "en": "TikTok will be less effective at finding and recommending people you already know. You may need to search for friends manually or share usernames directly."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Tap \"Sync contacts and Facebook friends\"",
+          "Tap both \"Remove previously synced contacts\" under contacts and Facebook",
+          "Turn off both \"Sync contacts\" AND \"Sync Facebook friends\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-disable-sync-contacts.webp",
+        "sha256": "7b0851f10c30173a6625c0725b2e5d20d522f0c8d3845cddc040ab456037722e"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7543897460582816312"
+    },
+    {
+      "uuid": "d3b8cebc-92ec-455c-a575-2294f6ea0de6",
+      "id": "tiktok-set-following-list-to-only-you",
+      "impact": "high",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set following list to only you"
+      },
+      "why": {
+        "en": "Hiding your following list prevents others from mapping your interests, relationships, communities, creators, or potential real-world connections. It reduces social profiling and makes it harder to infer personal details about you from who you follow."
+      },
+      "tradeoffs": {
+        "en": "Other people can’t browse who you follow, which can make your profile feel less social and makes it harder for friends to discover accounts through your following list."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Navigate to \"Interactions\"",
+          "Tap \"Following list\"",
+          "Select \"Only you\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-set-following-list-to-only-you.webp",
+        "sha256": "9ad931d4138f2229f1f158d2829a0229133fa93e0ace3bfa6c722beac7974843"
+      }
+    },
+    {
+      "uuid": "20371db0-daec-4812-b925-d4aa1080339f",
+      "id": "tiktok-set-liked-videos-to-only-you",
+      "impact": "low",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Set liked videos to only you"
+      },
+      "why": {
+        "en": "Hiding liked videos prevents others from using your likes to infer your interests, beliefs, relationships, habits, or sensitive preferences. Likes can reveal much more about you than your own posts and can be useful for profiling."
+      },
+      "tradeoffs": {
+        "en": "Other people can’t browse videos you’ve liked, so your profile becomes a little less social and friends can’t discover content through your likes."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Navigate to \"Interactions\"",
+          "Tap \"Liked videos\"",
+          "Select \"Only you\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-set-liked-videos-to-only-you.webp",
+        "sha256": "ffea428bc1491ec320d5d30ea8ad34e59094f85f010851d19ee002e068b8d38f"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7636670088171035157&category=web_account"
+    },
+    {
+      "uuid": "54b8c76b-3db4-4467-89ce-46fc8ada74d8",
+      "id": "tiktok-disable-viewer-history",
+      "impact": "low",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable viewer history"
+      },
+      "why": {
+        "en": "Turning Viewer History off prevents people you follow from seeing that you viewed their posts when they also have the feature enabled. This gives you more privacy around your browsing habits and prevents others from knowing which content or accounts you’re checking."
+      },
+      "tradeoffs": {
+        "en": "You also lose the ability to see which eligible users viewed your own posts. Likes and comments can still reveal that you viewed a post even with Viewer History disabled."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Tap Privacy",
+          "Navigate to \"Interactions\"",
+          "Tap \"Viewers\"",
+          "Turn off \"Viewer history\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-disable-viewer-history.webp",
+        "sha256": "b1fa5e7fb4a0255f46fee2aabbb1a94227e1c549fb0c5d0838295563c806073f"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7543604771517815302&category=web_account"
+    },
+    {
+      "uuid": "ef67146e-e0e0-482f-8382-f1a93919fcd1",
+      "id": "tiktok-enable-family-pairing",
+      "impact": "high",
+      "category": "parental",
+      "audience": [
+        "parental"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Enable Family pairing"
+      },
+      "why": {
+        "en": "Family Pairing gives parents stronger oversight of a teen’s TikTok use, including controls for screen time, Restricted Mode, privacy, messaging, and other safety settings. It can reduce exposure to inappropriate content and make important protections harder for the teen to simply change."
+      },
+      "tradeoffs": {
+        "en": "The teen gets less independence over some TikTok settings, and stricter controls may limit content or features they would otherwise be able to use. It also requires the parent to actively manage the linked account."
+      },
+      "steps": {
+        "en": [
+          "Open TikTok and go to your profile",
+          "Tap the menu (three lines) in the top corner",
+          "Tap Settings and privacy",
+          "Navigate to \"Content & Display\"",
+          "Tap \"Family Pairing\"",
+          "Tap continue",
+          "Select Parent if you're the parent OR Teen if you're the account being supervised",
+          "Select the account you'd like to supervise OR be supervised by"
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.zhiliaoapp.musically/tiktok-enable-family-pairing.webp",
+        "sha256": "df48bc8366e5e2573eebd0a2212b0ab3182a68dc46e60f4479bc64a04e55dd68"
+      },
+      "reference": "https://www.tiktok.com/support/faq_detail?id=7543604781667867142&category=web_account"
     }
   ]
 }

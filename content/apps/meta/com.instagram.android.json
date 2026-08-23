@@ -227,6 +227,84 @@
         "sha256": "b3cddef33c260281bb9dc5ba8365aadef76dcb0233a92bff50a7cc11101fb9d0"
       },
       "reference": "https://help.instagram.com/1535234260383659/?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "c7e5f6d8-0c5f-4462-9503-f31cabe27236",
+      "id": "instagram-disable-full-access-to-photos",
+      "impact": "high",
+      "category": "permissions",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Disable full access to photos"
+      },
+      "why": {
+        "en": "Limiting access prevents Instagram from seeing your entire photo/video library. It only gets the items you choose, reducing exposure of private photos, screenshots, documents and metadata—and limiting which media can be made available to app features that may upload or process content in the cloud."
+      },
+      "tradeoffs": {
+        "en": "You’ll need to approve additional photos/videos when uploading, and browsing your full library inside Instagram is less seamless. Some editing or AI/cloud-processing features may only work on media you explicitly allow."
+      },
+      "steps": {
+        "en": [
+          "Go to your profile",
+          "Tap the 3 line menu at the top right",
+          "Navigate to \"Your app and media\"",
+          "Tap \"Device Permissions\"",
+          "Tap \"Photos\"",
+          "Tap \"Update Device Settings\"",
+          "Tap \"Open Device Settings\"",
+          "Tap \"Permissions\"",
+          "Tap \"Photos and video\"",
+          "Select \"Allow limited access\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/instagram-disable-full-access-to-photos.webp",
+        "sha256": "c4b41002cf36325a23e097607b96c34aefd82bb5b272d704ad46bd66f6743147"
+      },
+      "reference": "https://help.instagram.com/1535234260383659/?cms_platform=android-app&helpref=platform_switcher"
+    },
+    {
+      "uuid": "2d4cddc6-3298-41b6-ba7a-91e5bd9600d9",
+      "id": "instagram-enable-message-links-in-external-browser",
+      "impact": "medium",
+      "category": "data-sharing",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Enable message links in external browser"
+      },
+      "why": {
+        "en": "External browsers usually give you stronger privacy controls, cookie isolation, tracker blocking, and less visibility for Instagram into what you do after opening a link. It also keeps your broader web activity more separated from the app."
+      },
+      "tradeoffs": {
+        "en": "Links may open a little less seamlessly, you might need to log in again, and some Instagram-specific navigation or “back to app” flows can feel less integrated."
+      },
+      "steps": {
+        "en": [
+          "Go to your profile",
+          "Tap the 3 line menu at the top right",
+          "Navigate to \"Your app and media\"",
+          "Tap \"App website permissions\"",
+          "Tap \"Message Links\"",
+          "Turn on \"Open in external browser\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.instagram.android/instagram-enable-message-links-in-external-browser.webp",
+        "sha256": "84e75b299aa4282af8d25653f33c1de3ba3810405832107d3f42e64ef2191a4e"
+      },
+      "reference": "https://help.instagram.com/1076828371437103/?cms_platform=android-app&helpref=platform_switcher"
     }
   ]
 }
