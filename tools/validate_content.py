@@ -172,10 +172,107 @@ def check_folder_structure(problems, path):
 
 
 def check_schema(problems, validator, path, data):
-    """Rule 1: the file must satisfy the JSON Schema."""
-    for error in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
-        location = "/".join(str(p) for p in error.path) or "(top level)"
-        problems.append((path, f"{location}: {error.message}"))
+    """Rule 1: the file must satisfy the JSON Schema.
+
+    WHY THIS IS MORE THAN A LOOP OVER iter_errors
+    The schema's top level is `oneOf: [appFile, deviceFile]`. When a file fails
+    — for any reason, however small — it fails *both* branches, so jsonschema
+    reports one error at the root: "is not valid under any of the given
+    schemas", with the entire document as context.
+
+    For a file with one tip that is merely unhelpful. At nineteen it is four
+    thousand characters of JSON that names neither the suggestion nor the field,
+    and finding the fault means reading the schema and the file side by side.
+    An apostrophe in an id cost exactly that.
+
+    So when the root error is a `oneOf`, this picks the branch the file was
+    obviously *meant* to satisfy — `package` means an app file, `target` means a
+    device one — and reports that branch's errors instead. Those carry a real
+    path: `suggestions/3/id`, not `(top level)`.
+    """
+    errors = sorted(validator.iter_errors(data), key=lambda e: list(e.path))
+
+    root_oneof = [
+        error for error in errors
+        if error.validator == "oneOf" and not list(error.path)
+    ]
+
+    if root_oneof and isinstance(data, dict):
+        branch = _intended_branch(validator.schema, data)
+        if branch is not None:
+            from jsonschema import Draft202012Validator
+
+            resolver_schema = dict(branch)
+            # Carry $defs across so internal $refs still resolve when the branch
+            # is validated on its own.
+            for key in ("$defs", "definitions"):
+                if key in validator.schema:
+                    resolver_schema[key] = validator.schema[key]
+
+            branch_errors = sorted(
+                Draft202012Validator(resolver_schema).iter_errors(data),
+                key=lambda e: list(e.path),
+            )
+            if branch_errors:
+                for error in branch_errors:
+                    problems.append((path, f"{_where(error)}: {error.message}"))
+                return
+
+        # No branch could be identified, or the branch validated cleanly and the
+        # oneOf failed for a reason this cannot narrow. Say so rather than
+        # dumping the document.
+        problems.append((
+            path,
+            "does not match either the app-file or device-file shape. An app "
+            "file needs 'package' and 'appName'; a device file needs 'target'.",
+        ))
+        return
+
+    for error in errors:
+        problems.append((path, f"{_where(error)}: {error.message}"))
+
+
+def _where(error) -> str:
+    """A readable location, naming the suggestion rather than its index.
+
+    `suggestions/3/id` is findable but requires counting. `suggestion
+    'facebook-limit-location-service' → id` is the thing you search for.
+    """
+    parts = list(error.absolute_path)
+
+    if len(parts) >= 2 and parts[0] == "suggestions" and isinstance(parts[1], int):
+        remainder = "/".join(str(p) for p in parts[2:])
+        return f"suggestions[{parts[1]}]" + (f" → {remainder}" if remainder else "")
+
+    return "/".join(str(p) for p in parts) or "(top level)"
+
+
+def _intended_branch(schema, data):
+    """Which half of the top-level oneOf this file was clearly aiming at.
+
+    Decided on the discriminating field rather than on which branch produces
+    fewer errors: a file with three faults in the app shape should be reported
+    as a broken app file, not compared against the device shape it never
+    resembled.
+    """
+    defs = schema.get("$defs") or schema.get("definitions") or {}
+
+    wanted = "appFile" if "package" in data or "appName" in data else (
+        "deviceFile" if "target" in data else None
+    )
+    if wanted is None:
+        return None
+
+    branch = defs.get(wanted)
+    if branch is not None:
+        return branch
+
+    # The oneOf may inline the branches rather than $ref them.
+    for candidate in schema.get("oneOf", []):
+        ref = candidate.get("$ref", "")
+        if ref.endswith(f"/{wanted}"):
+            return defs.get(wanted)
+    return None
 
 
 def check_filename_matches_package(problems, path, data):
