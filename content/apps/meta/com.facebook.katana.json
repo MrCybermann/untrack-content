@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "package": "com.facebook.katana",
+  "appName": "Facebook",
+  "publisher": "Meta",
+  "lastUpdated": "2026-08-23",
+  "suggestions": [
+    {
+      "uuid": "d37d22c7-a304-4494-a6bb-5d78d1159ce7",
+      "id": "facebook-review-profile-visibility",
+      "impact": "high",
+      "category": "account-visibility",
+      "audience": [
+        "all"
+      ],
+      "regions": [
+        "*"
+      ],
+      "title": {
+        "en": "Review profile visibility"
+      },
+      "why": {
+        "en": "Public profile details can reveal a surprisingly complete picture of you and may help strangers with profiling, targeted scams, social engineering, identity theft, or locating your real-world connections. Restricting visibility reduces unnecessary exposure."
+      },
+      "tradeoffs": {
+        "en": "People outside your chosen audience may know less about you, making it slightly harder for old acquaintances, colleagues, or people with shared backgrounds to recognize and find you."
+      },
+      "steps": {
+        "en": [
+          "Tap the 3 line menu on the top left",
+          "Tap \"Settings and Privacy\"",
+          "Tap \"Settings\"",
+          "Navigate to \"Audience and Visibility\"",
+          "Tap \"Profile Details\"",
+          "Tap each personal detail you want to limit",
+          "Tap on \"Who can see this\"",
+          "Make it at least \"Friends of friends\""
+        ]
+      },
+      "media": {
+        "type": "webp",
+        "src": "com.facebook.katana/facebook-review-profile-visibility.webp",
+        "sha256": "2e4fa30fbb1e2c9fe5351a7363d0dc0dd0fa35d6418e267b6a5dde53a5fedd3a"
+      },
+      "reference": "https://www.facebook.com/help/276177272409629"
+    }
+  ]
+}
