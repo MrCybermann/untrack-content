@@ -1,23 +1,27 @@
 {
-  "contentVersion": 21,
-  "generatedAt": "2026-08-23T18:41:14Z",
+  "contentVersion": 22,
+  "generatedAt": "2026-08-23T20:05:35Z",
   "files": [
     {
       "path": "apps/bytedance/com.zhiliaoapp.musically.json",
-      "sha256": "9fbd3ca0b7775645f6235e0015662f86c10c5ea2d35cf780e519430570fa81d2"
+      "sha256": "bd01aa79ed201464e892b2068bf42c6aee0252a63945efde76dbb2d576053a13"
+    },
+    {
+      "path": "apps/google/com.android.chrome.json",
+      "sha256": "be42c71278c2efacd7c1bf2b557d82655ed0ce20059dd023b16d040908c48a67"
     },
     {
       "path": "apps/meta/com.facebook.katana.json",
-      "sha256": "b966eaf9a4f3d83e552d13331f254e50bffca8038560d979f7ce1f84f6bb224b"
+      "sha256": "19370fbf1b670093e5b517af59034bebf3b4d60fedf2c05b7d2e74e503d167f5"
     },
     {
       "path": "apps/meta/com.instagram.android.json",
-      "sha256": "d46eb547d79530246b4a8d541882fadc0e84591b4635ec3ae708d95e44feb76f"
+      "sha256": "439c5afb3a041287b4460a6b3c1fa9a5fa93a772a37e5dce8369abdb259799e5"
     },
     {
       "path": "device/google/pixel.json",
       "sha256": "f929d97170a31e794dc2afa60d3ae106a0fdca9b3f932fe2dcb74aa4c0705dd4"
     }
   ],
-  "signature": "ed25519:R+PS5aOKYPeeOBC6vsGANHhmrMfXfaI4BGoGSKAGOA0cSszsRoPPd4fkN4XHs+tRUq1cFExoEUJGV3d9nUL1Dg=="
+  "signature": "ed25519:Cnq/1ob2kUWZgjA9Ut9tqKRBV1yFCT1wTQyfhC9uj0pXzOHQ7CCouyROrEC0eDOfHupj+VXMzmClHxJI6oqoAg=="
 }
