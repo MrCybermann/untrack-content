@@ -1,19 +1,23 @@
 {
-  "contentVersion": 19,
-  "generatedAt": "2026-08-23T10:56:17Z",
+  "contentVersion": 20,
+  "generatedAt": "2026-08-23T13:17:51Z",
   "files": [
     {
       "path": "apps/bytedance/com.zhiliaoapp.musically.json",
-      "sha256": "6e7a6ca0484294c918cdc147ed4244c29d218dd7323e4d80a87824ad3a6cd2e3"
+      "sha256": "9fbd3ca0b7775645f6235e0015662f86c10c5ea2d35cf780e519430570fa81d2"
+    },
+    {
+      "path": "apps/meta/com.facebook.katana.json",
+      "sha256": "9598703965604b46ec4df6ac24c0f701f81ab9a4fc86d4c03b0f98de64fbb6f2"
     },
     {
       "path": "apps/meta/com.instagram.android.json",
-      "sha256": "7324664eef78eebd2e36165491b76fcd6a17cbab6c1c44dc2e59626f2c3cf86b"
+      "sha256": "d46eb547d79530246b4a8d541882fadc0e84591b4635ec3ae708d95e44feb76f"
     },
     {
       "path": "device/google/pixel.json",
       "sha256": "f929d97170a31e794dc2afa60d3ae106a0fdca9b3f932fe2dcb74aa4c0705dd4"
     }
   ],
-  "signature": "ed25519:FJgP2vbfWrk9ooGV6CEUdcgAxQ2zt83i5ePM7EMLFRKwzNyXi7L4tU4uC/Vwl6nH8igDUu4PO96l6IpLS1TeBw=="
+  "signature": "ed25519:5EtRHR+jCdi/RH6Dst1bmsgzzsx7IvhEp2iWQkA3AJQ05IaGqQrhA7ySQe/p96/l2Gn4jn/WwRa4i2SDveefCg=="
 }
